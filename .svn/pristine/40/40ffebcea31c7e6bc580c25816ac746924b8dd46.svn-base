@@ -1,0 +1,19 @@
+/**
+ * Created by Alex on 2017/5/3.
+ */
+import connect from 'STORE/connect'
+import CrashTrend from './CrashTrend'
+import { crashTrend, verSelect, staTime, endTime } from 'REDUCER/crashTrend'
+
+export default connect(
+  state => ({
+    option: state.crashTrend.option
+  }),
+  {
+    crashTrend,
+    verSelect,
+    staTime,
+    endTime
+  },
+  CrashTrend
+)

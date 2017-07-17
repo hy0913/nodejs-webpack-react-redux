@@ -1,0 +1,43 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { selectAppListAction, createAppListAction, deleteAppListAction, updateAppListAction } from './request/applist'
+
+export const selectAppList = (data, success, fail) => (dispatch, getState) => {
+	const postData = {
+        appState: data.appState
+    }
+    dispatch(selectAppListAction(postData)).then(action => {
+    	NProgress.done()
+    	const dataBody = action.data.body
+        console.log(dataBody)
+        const appManageTable = []
+        if(dataBody.errorCode == '0') {
+			const data = dataBody.appManageTable
+			data.forEach((item) => {
+				appManageTable.push(item)
+			})
+        }
+        dispatch({
+        	type: 'SELECT_APP_LIST',
+        	appManageTable: appManageTable
+        })
+    })
+}
+
+const initialState = {
+    appManageTable: []
+}
+
+export default (state = initialState, action) => {
+    switch (action.type) {
+        case 'SELECT_APP_LIST':
+            return {
+                ...state,
+                appManageTable: action.appManageTable
+            }
+        default:
+            return state
+    }
+}

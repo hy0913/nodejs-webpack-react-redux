@@ -1,0 +1,249 @@
+import React, { Component } from 'react'
+import NProgress from 'nprogress'
+import './VersionView.scss'
+import { DatePicker, Select, Input , Button , Table , message } from 'antd'
+import ReactEcharts from 'echarts-for-react'
+import moment from 'moment';
+const { MonthPicker, RangePicker } = DatePicker;
+const dateFormat = 'YYYY/MM/DD'
+const monthFormat = 'YYYY/MM'
+const Option = Select.Option
+const columns = [{
+  title: '版本',
+  dataIndex: 'v1',
+  sorter: (a, b) => a.v1 - b.v1,
+}, {
+  title: '活跃用户',
+  dataIndex: 'v2',
+  sorter: (a, b) => a.v2 - b.v2,
+},{
+  title: '占比',
+  dataIndex: 'v3',
+  sorter: (a, b) => a.v3 - b.v3,
+}, {
+  title: '新增用户',
+  dataIndex: 'v4',
+  sorter: (a, b) => a.v4 - b.v4,
+}, {
+  title: '占比',
+  dataIndex: 'v5',
+  sorter: (a, b) => a.v5 - b.v5,
+}, {
+  title: '升级用户',
+  dataIndex: 'v6',
+  sorter: (a, b) => a.v6 - b.v6,
+}, {
+  title: '登录会员',
+  dataIndex: 'v7',
+  sorter: (a, b) => a.v7 - b.v7,
+}, {
+  title: '新登录会员',
+  dataIndex: 'v8',
+  sorter: (a, b) => a.v8 - b.v8,
+}, {
+  title: '新注册会员',
+  dataIndex: 'v9',
+  sorter: (a, b) => a.v9 - b.v9,
+}, {
+  title: '人均启动次数',
+  dataIndex: 'v10',
+  sorter: (a, b) => a.v10 - b.v10,
+}, {
+  title: '次均使用时长',
+  dataIndex: 'v11',
+  sorter: (a, b) => a.v11 - b.v11
+}];
+
+const dataTable = [{
+  v1: '1',
+  v2: '30',
+  v3: '30',
+  v4: '30',
+  v5: '30',
+  v6: '30',
+  v7: '30',
+  v8: '30',
+  v9: '30',
+  v10: '30',
+  v11: '30'
+}, {
+  v1: '2',
+  v2: '40',
+  v3: '40',
+  v4: '40',
+  v5: '40',
+  v6: '40',
+  v7: '40',
+  v8: '40',
+  v9: '40',
+  v10: '40',
+  v11: '40'
+}];
+
+let state = "ACTIVEUSER"
+
+export default class VersionView extends Component{
+
+	constructor(props){
+		super(props)
+    this.state = {
+        "platform":"1",
+        "beginTime":"20170501",
+        "appkey":"sads213",
+        "endTime":"20170508"
+    }
+	}
+  componentWillMount(){
+    const { version } = this.props
+        NProgress.start()
+        version(this.state,state,() => {
+          NProgress.done()
+          message.info('请求发送成功')
+        }, () => {
+          NProgress.done()
+          message.info('请求发送失败')
+    })
+  }
+	onChange(pagination, filters, sorter){
+		console.log('params', pagination, filters, sorter);
+	}
+  handleClick(e) {
+    const childs = e.currentTarget.parentNode.childNodes
+    for(let i = 0; i < childs.length; i++){
+      childs[i].classList.remove('active')
+    }
+    e.currentTarget.classList.add('active')
+  }
+  getOtion(dateArr,versionArr,arr1,arr2) {
+    console.log(dateArr,versionArr,arr1,arr2)
+      const option = {
+          tooltip : {
+              trigger: 'axis'
+          },
+          legend: {
+              bottom:true,
+              data:versionArr
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '15%',
+              containLabel: true
+          },
+          xAxis : [
+              {
+                  type : 'category',
+                  boundaryGap : false,
+                  splitLine: {
+                    show: true,
+                    lineStyle: {
+                      type: 'solid'
+                  }
+              },
+                  data : dateArr
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value'
+              }
+          ],
+          series : [
+              {
+                  name:versionArr[0],
+                  type:'line',
+                  zlevel: 10,
+                  itemStyle: {
+                    normal: {
+                      color: 'rgb(0, 153, 204)'
+                    }
+                  },
+                  data:arr1
+              },
+              {
+                  name:versionArr[1],
+                  type:'line',
+                  itemStyle: {
+                    normal: {
+                      color: 'rgb(204, 204, 204)'
+                    }
+                  },
+                  data:arr2
+              }
+          ]
+      }
+      return option;
+  }
+	render(){
+      const date = new Date(),
+        year = date.getFullYear(),
+        month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+        lastMonth = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+        day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+        preday = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+        lMonth = `${year}-${lastMonth}-${day}`,
+        yesterday = `${year}-${month}-${preday}`;
+      console.log(this.props)
+      const { dateArr,versionArr,arr1,arr2 } = this.props
+		return(
+				<div className="ver">
+					<div className="top">
+						<div className="vera verw">
+							<h4>版本分布</h4>
+						</div>
+						<div className="verb verw">
+						    <DatePicker size="default" defaultValue={moment(lMonth, 'YYYY-MM-DD')} />
+                {`  至  `}
+                <DatePicker size="default" defaultValue={moment(yesterday, 'YYYY-MM-DD')} />
+						</div>
+					</div>
+					<div className="mid">
+						<div className="row1">
+							<ul>
+								<li style={{width:"12.5%"}} className="active" onClick={ e => this.handleClick(e)}>活跃用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新增用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>升级用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新注册会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>人均启动次数</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>次均使用时长(秒)</li>
+							</ul>
+						</div>
+						<div className="row2">
+							<div className="r1">趋势图</div>
+							<div className="r2">
+							</div>
+							<div className="r3">
+								选择版本:
+							</div>
+							<div className="r4">
+								<Input placeholder="请选择"/>
+							</div>
+						</div>
+						<div className="row3">
+							<ReactEcharts
+	                        option={this.getOtion(dateArr,versionArr,arr1,arr2)} 
+	                        style={{height: '350px', width: '100%'}} 
+	                        className='react_for_echarts' />
+						</div>
+					</div>
+					<div className="bottom">
+						<div className="row1">
+							<div className="l1">数据表</div>					
+							<div className="l3">
+								<Button>导出</Button>
+							</div>
+              <div className="l2">
+                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} />
+              </div>
+						</div>
+						<div className="row2">
+							<Table columns={columns} pagination={false} dataSource={dataTable} onChange={this.onChange} className="bb"/>
+						  <div className="tableFooter"></div>
+            </div>
+					</div>
+				</div>
+			)
+	}
+}

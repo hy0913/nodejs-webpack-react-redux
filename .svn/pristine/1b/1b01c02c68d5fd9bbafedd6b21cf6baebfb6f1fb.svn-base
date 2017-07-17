@@ -1,0 +1,95 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { Modal, Button, Input, Select, Checkbox, Tooltip, Icon, message } from 'antd'
+import NProgress from 'nprogress'
+import './eventManageView.scss'
+
+
+export default class EventManageView extends Component {
+	constructor(props){
+		super(props)
+		this.state = {
+			event:{
+				"platform":"1",
+                "date":"20170509",
+      			"appkey":"sads213",
+                "appVersion":"all"
+			},
+			createEventVisible:false
+		}
+	}
+	componentWillMount(){
+		console.log(this.props)
+		const { eventManage } = this.props
+		eventManage(this.state.event,() => {
+            NProgress.done()
+            message.info('请求发送成功')
+        }, () => {
+            NProgress.done()
+            message.info('请求发送失败')
+        })
+	}
+	createEvent(){
+		this.setState({createEventVisible:true})
+	}
+	handleCancel(){
+		this.setState({createEventVisible:false})
+	}
+	handleOk(){
+		console.log(123)
+	}
+	render () {
+		return (
+				<div className="eve">
+					<div className="top">
+						<div className="list">自定义事件</div>
+						<div className="btn3" onClick={(e) => this.createEvent(e)}>添加自定义事件</div>
+					</div>
+					<div className="tb">
+						<table>
+							<tbody>
+								<tr style={{'background':'#F5F6FA','color':'#666'}}>
+									<td style={{'width':'25%'}}>事件ID</td>
+									<td style={{'width':'25%'}}>事件名称</td>
+									<td style={{'width':'25%'}}>事件用途</td>
+									<td style={{'width':'25%'}}>操作</td>
+								</tr>
+								<tr>
+									<td style={{'width':'25%'}}>我的金融生活</td>
+									<td style={{'width':'25%'}}></td>
+									<td style={{'width':'25%'}}>正常</td>
+									<td style={{'width':'25%'}}>			
+										<span>修改</span>
+										<span>删除</span>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div className="tableFooter"></div>
+					</div>
+					<Modal 
+						title="注册自定义事件"
+						visible={this.state.createEventVisible}
+          				onOk={(e) => this.handleOk(e)} 
+          				onCancel={(e) => this.handleCancel(e)}
+          				cancelText="取消" okText="确定"
+        			>
+          				<div className='list'>
+          					<span className='title'><b style={{color: '#F00'}}>*</b> APP名称：</span>         					
+    						<Input placeholder="请输入事件ID"/>
+          				</div>
+          				<div className='list'>
+          					<span className='title'><b style={{color: '#F00'}}>*</b> APP名称：</span>          					
+    						<Input placeholder="请输入事件名称"/>    
+  						</div>
+          				<div className='list'>
+          					<span style={{ height: '82px', lineHeight: '82px' }} className='title'>描述：</span>
+          					<Input type="textarea" rows={4} />
+          				</div>
+        			</Modal>
+				</div>			
+			)
+	
+	}
+}

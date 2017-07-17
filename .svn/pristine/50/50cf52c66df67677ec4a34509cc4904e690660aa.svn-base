@@ -1,0 +1,35 @@
+@mixin padding {
+	position: relative;
+    padding-right: 25px;
+    padding-left: 25px;
+}
+@mixin h5 {
+	display: inline-block;
+	text-indent: 8px;
+	font-size: 14px;
+	font-weight: normal;
+}
+
+.channelManage {
+	@include padding;
+	.row1 {
+		padding: 22px 0;
+		div {
+			.title {
+				@include h5;
+				border-left: 2px solid #88B7E0;
+				margin-right: 16px;
+			}
+		}
+		button {
+			float: right;
+		}
+	}
+	.row2 {
+		margin-bottom: 25px;
+		.tableContent {
+			margin-top: 20px;
+			border: 1px solid #ddd;
+		}
+	}
+}

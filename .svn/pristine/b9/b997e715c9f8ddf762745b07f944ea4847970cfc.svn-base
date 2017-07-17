@@ -1,0 +1,61 @@
+const getOption = (obj) => {
+    if(JSON.stringify(obj)=='{}'){
+        return {}
+    }else{
+        const option = {
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                bottom: '20',
+                data: obj.legend
+            },
+            grid: {
+                left: '3%',
+                right: '6%',
+                bottom: '25%',
+                containLabel: true
+            },
+            xAxis: [{
+                type: 'category',
+                axisTick: {
+                    // 刻度与标签对齐
+                    alignWithLabel: true
+                        // 隔1个显示1个标签
+                },
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        type: 'dotted'
+                    }
+                },
+                boundaryGap: false,
+                data: obj.xAxis
+            }],
+            yAxis: {
+                type: 'value',
+                axisTick: {
+                    // 刻度与标签对齐
+                    alignWithLabel: true
+                },
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted'
+                    }
+                },
+                axisLine: {
+                    show: true,
+                    onZero: true
+                },
+                axisTick: {
+                    show: true
+                }
+            },
+            series: obj.series
+        }
+        return option;
+    }
+	
+}
+
+export { getOption };

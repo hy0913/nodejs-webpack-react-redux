@@ -1,0 +1,15 @@
+import connect from 'STORE/connect'
+import ChannelManageView from './ChannelManage'
+
+export default connect(
+
+  state => ({
+
+  }),
+
+  {
+   
+  }, 
+
+  ChannelManageView
+)

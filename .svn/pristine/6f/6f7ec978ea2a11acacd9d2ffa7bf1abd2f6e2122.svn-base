@@ -1,0 +1,15 @@
+import { eventAction } from './request/eventManage'
+import NProgress from 'nprogress'
+
+export const eventManage = (data,suc,fail) => (dispatch,getState) => {
+	const newData = {
+		"platform":data.platform,
+     	"date":data.date,
+        "appkey":data.appkey,
+        "appVersion":data.appVersion
+    }
+    dispatch(eventAction(newData)).then(action =>{
+    	console.log(action)
+    })
+
+}

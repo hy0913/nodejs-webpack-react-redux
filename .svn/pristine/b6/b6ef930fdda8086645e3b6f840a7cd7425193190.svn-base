@@ -1,0 +1,346 @@
+import React, { ReactDom,Component, PropTypes } from 'react'
+import { Table, Row, Col, Button,DatePicker, Icon, message, Select, TreeSelect } from 'antd'
+import ReactEcharts from 'echarts-for-react'
+import './channelAnalysis.scss'
+import { yesterday, lMonthY, timeToString, durationToString } from 'GLOBAL'
+import moment from 'moment'
+// import { NestedTable } from './component'
+import { getOption } from '../../option/channelAnalysis'
+const { Option } = Select
+const { RangePicker } = DatePicker
+const SHOW_PARENT = TreeSelect.SHOW_PARENT
+
+const disabledDate = current => current && current.valueOf() > Date.now()-86400000
+let simgleDate = {};
+
+export default class OsVersion extends Component {
+	constructor(props){
+		super(props)
+		this.state = {
+			value: [],
+			tableReq: {
+				"ec_platform":"2",
+			    "ec_appKey":"17882660f8d511e6885744a8420bf25c",
+			    "ec_ranges_start":"1494864000000",
+			    "ec_ranges_end":"1494950400000",
+			    "ec_app_version":"1.0"
+			},
+			channelReq: {
+				"platform":"2",
+    			"appkey":"17882660f8d511e6885744a8420bf25c"
+			},
+			chartReq: {
+				"ec_platform":"2",
+			    "ec_appKey":"17882660f8d511e6885744a8420bf25c",
+			    "ec_ranges_start":"1494864000000",
+			    "ec_ranges_end":"1494950400000",
+			    "ec_app_version":"all",
+			    "ec_tab":"active_user",
+			    "channel_id":"ZXYH#wandoujia",
+			    "tranTime":"1"
+			}
+		}
+	}
+	getOption() {
+        const option = {
+            title: {
+                text: ''
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                bottom: 10,
+                data:[{name:'6.0',icon: 'roundRect'},{name:'5.1',icon: 'roundRect'},{name:'5.1.1',icon: 'roundRect'},{name:'4.4.2',icon: 'roundRect'},{name:'4.2.2',icon: 'roundRect'}]
+            },
+            toolbox: {
+                feature: {
+                    
+                }
+            },
+            grid: {
+            	show: true,
+            	top: '5%',
+                left: '5%',
+                right: '5%',
+                bottom: '20%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : ['3/26','3/27','3/28','3/29','3/30','4/01','4/02','4/03','4/04','4/05','4/06']
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'6.0',
+                    type:'line',
+                    zlevel: 10,
+                    itemStyle: {
+		                normal: {
+		                   color: 'rgb(0, 153, 204)'
+	                	}
+           			},
+                    data:[320, 132, 301, 445, 90, 230, 210, 132, 111, 184, 70]
+                },
+                {
+                    name:'5.1',
+                    type:'line',
+                    zlevel: 10,
+                    itemStyle: {
+		                normal: {
+		                   color: '#e910e2'
+	                	}
+           			},
+                    data:[220, 182, 191, 234, 290, 330, 310, 200, 100, 139, 175]
+                },
+                {
+                    name:'5.1.1',
+                    type:'line',
+                    zlevel: 10,
+                    normal: {
+		                   color: '#e91038'
+	                },
+                    data:[150, 232, 201, 154, 190, 339, 410, 201, 139, 191, 234]
+                },
+                {
+                    name:'4.4.2',
+                    type:'line',
+                    zlevel: 10,
+                    normal: {
+		                   color: '#d2e910'
+	                },
+                    data:[230, 632, 101, 354, 190, 330, 410, 190, 190, 398, 102]
+                },
+                {
+                    name:'4.2.2',
+                    type:'line',
+                    zlevel: 10,
+                    normal: {
+		                   color: '#087507'
+	                },
+                    data:[350, 432, 201, 154, 150, 230, 110, 791, 234, 394, 340]
+                }
+            ]
+        };
+        return option;
+    }
+
+	componentWillMount(){
+		
+		const { getTableData , getChartData , getChannelList } = this.props
+		getTableData(this.state.tableReq)
+		getChartData(this.state.chartReq)
+		getChannelList(this.state.channelReq)
+		const { chartOutput, channelList } = this.props.state
+		this.state.value = channelList.valueArr
+	}
+	handleClick(e,param){
+		const childs = e.currentTarget.parentNode.childNodes;
+		for(let i=0; i < childs.length; i++){
+			childs[i].classList.remove('active');
+		}
+		e.currentTarget.classList.add('active');
+		
+		const {getChartData} = this.props
+		getChartData({
+		    ...this.state,
+		    ec_tab: param,
+		})
+		this.state.ec_tab = param;
+	}
+	onTimeChange1(dateString){
+		var time = durationToString(dateString[0],dateString[1]);
+
+		const { getChartData } = this.props
+		getChartData({
+			...this.state,
+			ec_ranges_start: time.startTime,
+			ec_ranges_end: time.endTime,
+			tranTime: time.tranTime
+		})
+		this.state.ec_ranges_start = time.startTime
+		this.state.ec_ranges_end = time.endTime
+		this.state.tranTime = time.tranTime
+	}
+	onTimeChange2(dateString){
+		var time = timeToString(dateString);
+		
+		const { getTableData } = this.props
+		getTableData({
+			"ec_platform": this.state.ec_platform,
+		    "ec_appKey": this.state.ec_appKey,
+		    "ec_ranges_start": time.startTime,
+		    "ec_ranges_end": time.endTime,
+		    "ec_app_version": this.state.ec_app_version
+		})
+		simgleDate.startTime = time.startTime
+		simgleDate.endTime = time.endTime
+	}
+	onTypeChange(value){
+		const { getChartData } = this.props
+		
+		getChartData({
+			...this.state,
+			"ec_brands": value
+		})
+		this.state.ec_brands = value;
+	}
+	onVersionChange(value){
+		const { getChartData } = this.props
+		
+		getChartData({
+			...this.state,
+			"ec_app_version": value
+		})
+		this.state.ec_app_version = value;
+	}
+	outputClick(e){
+		
+	}
+  
+	handleTopClick() {
+
+	}
+	onChange = (value) => {
+		console.log(value)
+		this.state.value = value
+		this.setState(value)
+		console.log(this.state)
+
+		const { chartOutput } = this.props.state
+		const values = this.state.value, tempLeg = [], tempSer = [];
+		for(var i=0;i<values.length;i++){
+			chartOutput.legend.map((item,index)=>{
+				if(item.name == values[i]){
+					tempLeg.push(item)
+				}
+			})
+			chartOutput.series.map((item,index)=>{
+				if(item.name == values[i]){
+					tempSer.push(item)
+				}
+			})
+			chartOutput.legend = tempLeg
+			chartOutput.series = tempSer
+			console.log(chartOutput)
+		}
+	}
+	
+	render(){
+		const columns = [{
+		      title: '合作方名称',
+		      dataIndex: 'channel_name',
+		      key: 'channel_name',
+		      sorter: (a, b) => a.channel_name - b.channel_name,
+		    }, {
+		      title: '活跃用户',
+		      dataIndex: 'active_user',
+		      key: 'active_user',
+		      sorter: (a, b) => a.active_user - b.active_user,
+		    }, {
+		      title: '新增用户',
+		      dataIndex: 'new_user',
+		      key: 'new_user',
+		      sorter: (a, b) => a.new_user - b.new_user,
+		    },{
+		      title: '登录会员',
+		      dataIndex: 'login_user',
+		      key: 'login_user',
+		      sorter: (a, b) => a.login_user - b.login_user,
+		    },{
+		      title: '人均启动次数',
+		      dataIndex: 'avg_start_count',
+		      key: 'avg_start_count',
+		      sorter: (a, b) => a.avg_start_count - b.avg_start_count,
+		    },{
+		      title: '次均使用时长(秒)',
+		      dataIndex: 'avg_time',
+		      key: 'avg_time',
+		      sorter: (a, b) => a.avg_time - b.avg_time,
+		    }];
+
+
+		const { tableOutput, chartOutput, channelList } = this.props.state
+		// const option = getOption(chartOutput)
+
+		const tProps = {
+		        treeData:channelList.treeData,
+		        value: this.state.value,
+		        onChange: this.onChange,
+		        multiple: true,
+		        treeCheckable: false,
+		        showCheckedStrategy: SHOW_PARENT,
+		        searchPlaceholder: 'Please select',
+		        style: {
+		          width: 300
+		      	}
+		    }
+		
+    	return (
+			<div className='layout-container'>
+				<Row className='header-container'>
+      				<Col span={6} className='fix-left'><h5>渠道效果</h5><Icon type="question-circle" /></Col>
+			      	<Col span={10}></Col>
+			      	<Col span={4}>
+			      		<DatePicker 
+			      			disabledDate={disabledDate}
+			      			defaultValue={moment(yesterday, 'YYYY-MM-DD')} 
+			      			onChange={(date,dateString) => this.onChangeTime(dateString)} />
+			      	</Col>
+			      	<Col span={4}>
+			      		<Select
+    						showSearch
+    						style={{ width: 150, float: 'right' }}
+    						defaultValue="all"
+    						onChange={(value)=>this.onVersionChange(value)}
+  						>
+    						<Option value="all">全部版本</Option>
+    						<Option value="1.0">6.8</Option>
+    						<Option value="2.0">6.7</Option>
+  						</Select>
+			    	</Col>
+    			</Row>		
+
+				<div className='table-title-bar'>
+	    			<div className='table-title-text'>合作方指标</div>
+	    			
+	    			<div className='outputBtn'><Button onClick={this.outputClick}>导出</Button></div>
+	    		</div>
+				<Table 
+					pagination={{ pageSize: 5,showQuickJumper: true }} 
+					columns={columns} 
+					dataSource={tableOutput} 
+					onChange={this.handleChange} 
+					style={{border:'1px solid #e9e9e9'}}/>
+
+
+    			<ul className='nav-bar1'>
+    				<li onClick={(e,param) => this.handleClick(e,'active_user')} className='active'><a>活跃用户</a></li>
+    				<li onClick={(e,param) => this.handleClick(e,'new_user')} className=''><a>新增用户</a></li>	
+    				<li onClick={(e,param) => this.handleClick(e,'login_user')} className=''><a>登录会员</a></li>
+    				<li onClick={(e,param) => this.handleClick(e,'avg_start_count')} className=''><a>人均启动次数</a></li>
+    				<li onClick={(e,param) => this.handleClick(e,'avg_time')} className='last-li'><a>次均使用时长(秒)</a></li>
+    			</ul>
+
+    			<div className='echartBox1'>
+    				<div className='echartTitle'>趋势图</div>
+    				<div style={{display:'inline-block',position:'absolute',right:'30px',top:'60px'}}>
+    					<span>选择渠道：</span><TreeSelect {...tProps} />
+    				</div>
+                    <ReactEcharts
+                        option={this.getOption()} 
+                        style={{height: '350px', width: '100%'}} 
+                        className='react_for_echarts' />
+                </div>
+        	</div>
+        )
+	}
+}

@@ -1,0 +1,120 @@
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import './slider.scss'
+import { Link } from 'react-router'
+
+class Slider extends Component{
+  constructor(props){
+    super(props)
+  }
+  handleClick(e){
+    const target = e.target
+    const next = target.nextSibling
+
+      if (target.getAttribute('data-state') == '0') {
+        target.classList.add('active')
+        target.setAttribute('data-state', '1')
+        next.style.display = "block"
+      } else {
+        target.classList.remove('active')
+        target.setAttribute('data-state', '0')
+        next.style.display = "none"
+      }
+  }
+  render(){
+        return (
+        <div id="sidebar">
+            <div className="sideContainer">
+                  <div className="smenu">
+                    <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>今日实时</div>
+                          <ul>
+                            {/*<li><a href="#/todayDetails">今日实时</a></li>*/}
+                            <li><Link to="home/todayDetails.html">今日实时</Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>基本统计</div>
+                          <ul>
+                            <li><Link to="home/applicationTrend.html">应用趋势</Link></li>
+                              <li><Link to="home/timeAnalysis.html">时段分析</Link></li>
+                              <li><Link to="home/version.html">版本分布</Link></li>
+                              <li><Link to="home/region.html">地域分析</Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>用户行为</div>
+                          <ul>
+                            <li><Link to="home/startCount.html">启动次数</Link></li>
+                              <li><Link to="home/useTime.html">使用时长</Link></li>
+                              <li><Link to="home/pagePath.html">页面路径分析</Link></li>
+                              <li><a href="#">关键漏斗</a></li>
+                              <li><Link to="home/event.html">自定义事件</Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>活跃及留存</div>
+                          <ul>
+                              <li><Link to="home/userActivity.html">用户活跃度</Link></li>
+                              <li><Link to="home/userRetain.html">用户留存</Link></li>
+                              <li><Link to="home/pageRetain.html">页面留存</Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>渠道分析</div>
+                          <ul>
+                            <li><a href="#">渠道效果</a></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>终端与网络</div>
+                          <ul>
+                            <li><Link to="home/Brand.html">品牌分析</Link></li>
+                              <li><Link to="home/modelAnalysis.html">机型分布</Link></li>
+                              <li><Link to="home/osVersion.html">操作系统版本</Link></li>
+                              <li><Link to="home/resolution.html">分辨率</Link></li>
+                              <li><Link to="home/netAndOperator.html"><span>网络与运营商</span></Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>Crash分析</div>
+                          <ul>
+                            <li><Link to="home/realCrash.html">实行Crash</Link></li>
+                              <li><Link to="home/crashTrend.html">Crash趋势</Link></li>
+                              <li><Link to="home/crashDetail.html">Crash详情</Link></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>新版Crash分析</div>
+                          <ul>
+                            <li><a href="#">Crash列表</a></li>
+                              <li><a href="#">Crash趋势</a></li>
+                              <li><a href="#">符号化文件管理</a></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>性能分析</div>
+                          <ul>
+                            <li><a href="#">请求性能</a></li>
+                              <li><a href="#">网络异常</a></li>
+                              <li><a href="#">网络性能地域分析</a></li>
+                              <li><a href="#">自定义性能事件分析</a></li>
+                              <li><a href="#">自定义性能事件地域分析</a></li>
+                          </ul>
+                      </div>
+                      <div className="grp">
+                        <div className="tt" data-state='0' onClick={e=>this.handleClick(e)}>管理设置</div>
+                          <ul>
+                            <li><Link to="home/eventManage.html">自定义事件管理</Link></li>
+                              <li><Link to="home/paramsManage.html">参数管理</Link></li>
+                              <li><a href="#">渠道管理</a></li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        )
+    }
+}
+
+export default Slider

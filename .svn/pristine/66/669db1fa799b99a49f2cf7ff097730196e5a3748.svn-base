@@ -1,0 +1,52 @@
+export const ROOT_PATH = 'dataAnalyseIM'
+export const HOME_PATH = 'home'
+export const HOME_MENU = ''
+export const HOME_ITEM = ''
+
+/*时间*/
+const date = new Date(),
+	  year = date.getFullYear(),
+	  month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+	  lastMonth = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+	  //昨天
+	  preDay = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+	  //上周昨天
+	  lastPreDay = (date.getDate() - 8) < 10 ? '0' + (date.getDate() - 8) : (date.getDate() - 8),
+	  //今天
+	  day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+	  today = `${year}-${month}-${day}`,
+	  yesterday = `${year}-${month}-${preDay}`,
+	  lastWeekY = `${year}-${month}-${lastPreDay}`,
+	  lMonthY = `${year}-${lastMonth}-${preDay}`
+
+const timeToString = (date) => {
+	var arr = date.split("-");
+	var datumStart = new Date(Date.UTC(arr[0],arr[1]-1,arr[2],'00','00','00'));
+	var datumEnd = new Date(Date.UTC(arr[0],arr[1]-1,arr[2],'23','59','59'));
+	return {
+		startTime: (datumStart.getTime()),
+		endTime: (datumEnd.getTime())
+	}
+}
+
+const durationToString = (preDate, date) => {
+	var arr1 = preDate.split('-');
+	var arr2 = date.split("-");
+	var datumStart = new Date(Date.UTC(arr1[0],arr1[1]-1,arr1[2],'00','00','00'));
+	var datumEnd = new Date(Date.UTC(arr2[0],arr2[1]-1,arr2[2],'23','59','59'));
+	return {
+		startTime: (datumStart.getTime()),
+		endTime: (datumEnd.getTime())
+	}
+}
+
+const getTime = (date) => {
+	var temp = new Date(parseInt(date) * 1000);
+	var month = temp.getMonth() + 1;
+	month = month < 10 ? '0' + month : month;
+	var day = temp.getDate();
+	day = day < 10 ? '0' + day : day;
+	return (month +'/'+ day);
+}
+
+export { today, yesterday, lastWeekY, lMonthY, timeToString, getTime, durationToString }

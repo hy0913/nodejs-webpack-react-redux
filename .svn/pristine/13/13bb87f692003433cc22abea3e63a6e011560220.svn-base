@@ -1,0 +1,298 @@
+import React, { Component} from 'react'
+import './BrandView.scss'
+import NProgress from 'nprogress'
+import { DatePicker, Select, Input, Button, Table } from 'antd'
+import ReactEcharts from 'echarts-for-react'
+import moment from 'moment'
+const { MonthPicker, RangePicker } = DatePicker;
+const dateFormat = 'YYYY/MM/DD'
+const monthFormat = 'YYYY/MM'
+const Option = Select.Option
+const columns = [{
+    title: '品牌',
+    dataIndex: 'v1',
+    sorter: (a, b) => a.v1 - b.v1,
+}, {
+    title: '活跃用户',
+    dataIndex: 'v2',
+    sorter: (a, b) => a.v2 - b.v2,
+}, {
+    title: '新增用户',
+    dataIndex: 'v3',
+    sorter: (a, b) => a.v3 - b.v3,
+}, {
+    title: '升级用户',
+    dataIndex: 'v4',
+    sorter: (a, b) => a.v4 - b.v4,
+}, {
+    title: '登录会员',
+    dataIndex: 'v5',
+    sorter: (a, b) => a.v5 - b.v5,
+}, {
+    title: '新登录会员',
+    dataIndex: 'v6',
+    sorter: (a, b) => a.v6 - b.v6,
+}, {
+    title: '新注册会员',
+    dataIndex: 'v7',
+    sorter: (a, b) => a.v7 - b.v7,
+}, {
+    title: '人均启动次数',
+    dataIndex: 'v8',
+    sorter: (a, b) => a.v8 - b.v8,
+}, {
+    title: '次均使用时长',
+    dataIndex: 'v9',
+    sorter: (a, b) => a.v11 - b.v11
+}];
+
+const data = [{
+    v1: 'huawei',
+    v2: '30',
+    v3: '30',
+    v4: '30',
+    v5: '30',
+    v6: '30',
+    v7: '30',
+    v8: '30',
+    v9: '30'
+}, {
+    v1: '荣耀',
+    v2: '40',
+    v3: '40',
+    v4: '40',
+    v5: '40',
+    v6: '40',
+    v7: '40',
+    v8: '40',
+    v9: '40'
+}, {
+    v1: '魅族',
+    v2: '40',
+    v3: '40',
+    v4: '40',
+    v5: '40',
+    v6: '40',
+    v7: '40',
+    v8: '40',
+    v9: '40'
+}, {
+    v1: '中国移动And！',
+    v2: '40',
+    v3: '40',
+    v4: '40',
+    v5: '40',
+    v6: '40',
+    v7: '40',
+    v8: '40',
+    v9: '40'
+}, {
+    v1: 'OPPO',
+    v2: '40',
+    v3: '40',
+    v4: '40',
+    v5: '40',
+    v6: '40',
+    v7: '40',
+    v8: '40',
+    v9: '40'
+}, {
+    v1: 'utouu',
+    v2: '40',
+    v3: '40',
+    v4: '40',
+    v5: '40',
+    v6: '40',
+    v7: '40',
+    v8: '40',
+    v9: '40'
+}];
+
+export default class BrandView extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            platform: '1',
+            appkey: 'sads213',
+            dateTime: '20170425',
+            appVersion: '1.1',
+            interfaceName: 'startTimes',
+            eventIdentifier: 'AppStart'
+        }
+    }
+    handleClick(e){
+        const childs = e.currentTarget.parentNode.childNodes
+        for(let i = 0; i < childs.length; i++){
+          childs[i].classList.remove('active')
+        }
+        e.currentTarget.classList.add('active')
+        const { brand } = this.props
+        NProgress.start()
+        brand(this.state, () => {
+            NProgress.done()
+            message.info('请求发送成功')
+        }, () => {
+            NProgress.done()
+            message.info('请求发送失败')
+        })
+    }
+    getOtion() {
+        const option = {
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                bottom: true,
+                data: ['huawei', '荣耀', '魅族', 'OPPO', '中国移动And']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                containLabel: true
+            },
+            xAxis: [{
+                type: 'category',
+                boundaryGap: false,
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        type: 'solid'
+                    }
+                },
+                data: ['2017-03-27', '2017-03-30', '2017-04-02', '2017-04-05', '2017-04-08', '2017-04-11', '2017-04-14', '2017-04-17', '2017-04-20', '2017-04-23', '2017-04-26']
+            }],
+            yAxis: [{
+                type: 'value'
+            }],
+            series: [{
+                name: 'huawei',
+                type: 'line',
+                symbol: 'circle',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0, 153, 204)'
+                    }
+                },
+                data: [120, 132, 101, 134, 90, 230, 210, 134, 90, 230, 210]
+            }, {
+                name: '荣耀',
+                type: 'line',
+                symbol: 'square',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(204, 204, 204)'
+                    }
+                },
+                data: [220, 150, 105, 64, 90, 20, 10, 54, 40, 30, 240]
+            }, {
+                name: '魅族',
+                type: 'line',
+                symbol: 'triangle',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(230, 75, 93)'
+                    }
+                },
+                data: [19, 30, 81, 14, 90, 200, 44, 174, 40, 350, 310]
+            }, {
+                name: 'OPPO',
+                type: 'line',
+                symbol: 'diamond',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(253, 186, 70)'
+                    }
+                },
+                data: [10, 132, 11, 14, 90, 20, 20, 14, 90, 20, 10]
+            }, {
+                name: '中国移动And',
+                type: 'line',
+                symbol: 'emptyCircle',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(61, 55, 91)'
+                    }
+                },
+                data: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+            }]
+        }
+        return option;
+    }
+    onChange(pagination, filters, sorter) {
+        console.log('params', pagination, filters, sorter);
+    }
+    render() {
+        const date = new Date(),
+      year = date.getFullYear(),
+      month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+      lastMonth = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+      day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+      preday = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+      lMonth = `${year}-${lastMonth}-${day}`,
+      yesterday = `${year}-${month}-${preday}`;
+        return (
+            <div className="brand">
+					<div className="top">
+						<div className="vera verw">
+							<h4>品牌分布</h4>
+						</div>
+						<div className="verb verw">
+						    <DatePicker size="default" defaultValue={moment(lMonth, 'YYYY-MM-DD')} />
+                            {`  至  `}
+                            <DatePicker size="default" defaultValue={moment(yesterday, 'YYYY-MM-DD')} />
+						</div>
+					</div>
+					<div className="mid">
+						<div className="row1">
+							<ul>
+								<li style={{width:"12.5%"}} className="active" onClick={ e => this.handleClick(e)}>活跃用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新增用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>升级用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新注册会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>人均启动次数</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>次均使用时长</li>
+							</ul>
+						</div>
+						<div className="row2">
+							<div className="r1">趋势图</div>
+							<div className="r2">
+								<Select defaultValue="top5品牌" style={{ width: 200 }}>
+							      <Option value="top5品牌">top5品牌</Option>
+							      <Option value="top10品牌">top10品牌</Option>
+							    </Select>
+							</div>
+						</div>
+						<div className="row3">
+							<ReactEcharts
+	                        option={this.getOtion()} 
+	                        style={{height: '350px', width: '100%'}} 
+	                        className='react_for_echarts' />
+						</div>
+					</div>
+					<div className="bottom">
+						<div className="row1">
+							<div className="l1">数据表</div>
+							<div className="l2">
+								<DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} />
+							</div>
+							<div className="l3">
+								<Button>导出</Button>
+							</div>
+						</div>
+						<div className="row2">
+							<Table columns={columns} pagination={false} className='tableContent' dataSource={data} onChange={this.onChange}/>
+						</div>
+                        <div className="tableFooter"></div>
+					</div>
+				</div>
+        )
+    }
+}

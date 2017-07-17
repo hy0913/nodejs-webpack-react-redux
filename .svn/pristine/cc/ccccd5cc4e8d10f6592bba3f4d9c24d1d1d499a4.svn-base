@@ -1,0 +1,14 @@
+import connect from 'STORE/connect'
+import ModelAnalysisView from './ModelAnalysisView'
+
+export default connect(
+  state => ({
+    
+  }),
+
+  {
+
+  }, 
+
+  ModelAnalysisView
+)

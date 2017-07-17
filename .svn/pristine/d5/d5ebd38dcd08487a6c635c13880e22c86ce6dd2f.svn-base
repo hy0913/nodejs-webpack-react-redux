@@ -1,0 +1,19 @@
+import connect from 'STORE/connect'
+import { selectOnlineParam, createOnlineParam, chooseOnlineParamAction, updateOnlineParam } from 'REDUCER/onlineParam'
+import OnlineParamView from './OnlineParam'
+
+export default connect(
+
+  state => ({
+	 state: state.onlineParam
+  }),
+
+  {
+   	selectOnlineParam,
+   	createOnlineParam,
+   	chooseOnlineParamAction,
+   	updateOnlineParam
+  },
+
+  OnlineParamView
+)

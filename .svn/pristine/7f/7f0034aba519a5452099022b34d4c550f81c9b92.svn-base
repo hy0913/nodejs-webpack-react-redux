@@ -1,0 +1,205 @@
+/**
+ * Created by Alex on 2017/4/30.
+ */
+import moment from 'moment'
+import NProgress from 'nprogress'
+import React, { Component } from 'react'
+import ReactEcharts from 'echarts-for-react'
+import { DatePicker, Select, message } from 'antd'
+import ImgTab from '../../components/utils/ImgTab'
+import TopTitle from '../../components/utils/TopTitle'
+import './NetAndOperator.scss'
+import getTime from 'UTILS/getTime'
+
+const getData = (arr) => {
+  let data = {
+    all: [],
+    title: []
+  }
+  for (let i = 0; i < arr.length; i++) {
+    let {count: value, name} = arr[i]
+    data.all.push({value: value, name: name})
+    data.title.push(name)
+  }
+  return data
+}
+
+class NetAndOperator extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tabs: {
+        tabInfo1: [
+          {text: '当天活跃用户', mark: 'net-day'},
+          {text: '周日活跃用户', mark: 'net-week'},
+          {text: '月日活跃用户', mark: 'net-month'}
+        ],
+        tabInfo2: [
+          {text: '当天活跃用户', mark: 'net-day'},
+          {text: '周日活跃用户', mark: 'net-week'},
+          {text: '月日活跃用户', mark: 'net-month'}
+        ]
+      },
+      options: {
+        netOption: {
+          series: [
+            {
+              name: '访问来源',
+              type: 'pie',
+              hoverAnimation: false,
+              radius: '75%',
+              data: []
+            }
+          ],
+          color: ['#88c3e8', '#aedd8f', '#00ccff', '#ffbb33', '#00cc00', '#ff5c45'],
+          tooltip: {
+            formatter: function (params) {
+              return params.name + '：' + params.value + '(' + params.percent + '%)'
+            }
+          },
+          legend: {
+            data: [],
+            bottom: '0%'
+          }
+        },
+        oprOption: {
+          series: [
+            {
+              name: '访问来源',
+              type: 'pie',
+              hoverAnimation: false,
+              radius: '75%',
+              data: []
+            }
+          ],
+          color: ['#88c3e8', '#aedd8f', '#00ccff', '#ffbb33', '#00cc00', '#ff5c45'],
+          tooltip: {
+            formatter: function (params) {
+              return params.name + '：' + params.value + '(' + params.percent + '%)'
+            }
+          },
+          legend: {
+            data: [],
+            bottom: '0%'
+          }
+        }
+      },
+      reqDate: 0,
+      // 设置请求的初始状态
+      ec_platform: '2',
+      ec_appKey: '17882660f8d511e6885744a8420bf25c',
+      ec_ranges_start: '1494259200000',
+      ec_ranges_end: '1494331349655',
+      ec_app_version: 'all',
+      ec_tab: 'crash_user_percent',
+      flag: 'all'
+    }
+    this.tabClick = this.tabClick.bind(this)
+    this.selectChange = this.selectChange.bind(this)
+  }
+
+  success = () => {
+    const { netAndCarrier } = this.props
+    let netData = getData(netAndCarrier[1].netAndCarrierSub)
+    let oprData = getData(netAndCarrier[0].netAndCarrierSub)
+    this.setState({options: {
+      netOption: {
+        series: [{data: netData.all}],
+        legend: {data: netData.title}
+      },
+      oprOption: {
+        series: [{data: oprData.all}],
+        legend: {data: oprData.title}
+      }
+    }})
+    NProgress.done()
+    message.info('请求发送成功')
+  }
+
+  resetStateList () {
+    const { netAndOperator, netAndCarrier } = this.props
+    netAndOperator(this.state, this.success, () => {
+      NProgress.done()
+      message.info('请求发送失败')
+    })
+  }
+
+  tabClick (time) {
+    this.setState(time)
+    setTimeout(() => {
+      const { netAndOperator, netAndCarrier } = this.props
+      NProgress.start()
+      netAndOperator(this.state, this.success, () => {
+        NProgress.done()
+        message.info('请求发送失败')
+      })
+    }, 0)
+  }
+
+  selectChange (ver) {
+    this.setState({ec_app_version: ver})
+    setTimeout(() => {
+      const { netAndOperator } = this.props
+      NProgress.start()
+      netAndOperator(this.state, this.success, () => {
+        NProgress.done()
+        message.info('请求发送失败')
+      })
+    }, 0)
+  }
+
+  timeChange (date, dateString) {
+    console.log(date)
+    console.log(dateString)
+  }
+
+  componentWillMount () {
+    this.resetStateList()
+  }
+
+  render () {
+    const { tabInfo1, tabInfo2 } = this.state.tabs
+    const { netAndOperator, netAndCarrier } = this.props
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
+    const day = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1)
+    const yesterday = `${year}-${month}-${day}`
+    const disabledDate = current => current && current.valueOf() > Date.now()
+
+    return (
+      <div className='net'>
+        <TopTitle value='网络与运营商'>
+          <Select defaultValue='all' style={{ width: 120, float: 'right' }} onChange={(value, arr) => this.selectChange(value, arr)}>
+            <Select.Option value='all'>全部版本</Select.Option>
+            <Select.Option value='6.8'>6.8</Select.Option>
+            <Select.Option value='6.7'>6.7</Select.Option>
+          </Select>
+          <DatePicker style={{ float: 'right', marginRight: 30 }} defaultValue={moment(yesterday, 'YYYY-MM-DD')} disabledDate={disabledDate} onChange={(date, dateString) => this.timeChange(date, dateString)} />
+        </TopTitle>
+        <div className='content'>
+          <ImgTab tabInfo={tabInfo1} click={this.tabClick} reqDate={this.state.reqDate} />
+          <div className='tab-img'>
+            <h4>网络分布</h4>
+            <ReactEcharts
+              option={this.state.options.netOption}
+              style={{height: '400px'}}
+            />
+          </div>
+        </div>
+        <div className='content'>
+          <ImgTab tabInfo={tabInfo2} click={() => (console.log(1))} />
+          <div className='tab-img'>
+            <h4>运营商分布</h4>
+            <ReactEcharts
+              option={this.state.options.oprOption}
+              style={{height: '400px'}}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default NetAndOperator

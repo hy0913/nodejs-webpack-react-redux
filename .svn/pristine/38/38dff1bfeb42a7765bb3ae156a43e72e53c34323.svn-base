@@ -1,0 +1,12 @@
+import connect from 'STORE/connect'
+import OsVersionView from './OsVersionView'
+
+export default connect(
+	state => ({
+
+	}),
+
+	{},
+	
+	OsVersionView
+)

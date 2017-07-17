@@ -1,0 +1,28 @@
+import { BZ_REQUESTER } from 'MIDDLEWARE/requester'
+import API from 'CONSTANT/api'
+
+const APP_OPR = ['APP_OPR_REQ', 'APP_OPR_SUC', 'APP_OPR_FAL']
+
+export const selectOnlineParamAction = data => ({
+  [BZ_REQUESTER]: {
+    types: APP_OPR,
+    url: API.ONLINE_PARAM_SELECT_URL,
+    body: data
+  }
+})
+
+export const createOnlineParamAction = (data) => ({
+  [BZ_REQUESTER]: {
+    types: APP_OPR,
+    url: API.ONLINE_PARAM_CREATE_URL,
+    body: data
+  }
+})
+
+export const updateOnlineParamAction = (data) => ({
+  [BZ_REQUESTER]: {
+    types: APP_OPR,
+    url: API.ONLINE_PARAM_UPDATE_URL,
+    body: data
+  }
+})

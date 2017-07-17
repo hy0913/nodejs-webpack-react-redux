@@ -1,0 +1,281 @@
+import React, { Component } from 'react'
+import NProgress from 'nprogress'
+import './VersionView.scss'
+import { DatePicker, Select, Input , Button , Table , message } from 'antd'
+import ReactEcharts from 'echarts-for-react'
+import moment from 'moment';
+const { MonthPicker, RangePicker } = DatePicker;
+const dateFormat = 'YYYY/MM/DD'
+const monthFormat = 'YYYY/MM'
+const Option = Select.Option
+const columns = [{
+  title: '版本',
+  dataIndex: 'appVersion',
+  sorter: (a, b) => a.appVersion - b.appVersion,
+}, {
+  title: '活跃用户',
+  dataIndex: 'activeUser',
+  sorter: (a, b) => a.activeUser - b.activeUser,
+},{
+  title: '占比',
+  dataIndex: 'zb1',
+  sorter: (a, b) => a.zb1 - b.zb1,
+}, {
+  title: '新增用户',
+  dataIndex: 'addUser',
+  sorter: (a, b) => a.addUser - b.addUser,
+}, {
+  title: '占比',
+  dataIndex: 'zb2',
+  sorter: (a, b) => a.zb2 - b.zb2,
+}, {
+  title: '升级用户',
+  dataIndex: 'upgradeUser',
+  sorter: (a, b) => a.upgradeUser - b.upgradeUser,
+}, {
+  title: '登录会员',
+  dataIndex: 'loginMember',
+  sorter: (a, b) => a.loginMember - b.loginMember,
+}, {
+  title: '新登录会员',
+  dataIndex: 'newLoginMember',
+  sorter: (a, b) => a.newLoginMember - b.newLoginMember,
+}, {
+  title: '新注册会员',
+  dataIndex: 'newRegisterMember',
+  sorter: (a, b) => a.newRegisterMember - b.newRegisterMember,
+}, {
+  title: '人均启动次数',
+  dataIndex: 'perStartTimes',
+  sorter: (a, b) => a.perStartTimes - b.perStartTimes,
+}, {
+  title: '次均使用时长',
+  dataIndex: 'perUserTime',
+  sorter: (a, b) => a.perUserTime - b.perUserTime
+}];
+
+const getOtion = (dateArr,versionArr,arr1,arr2) =>{
+      const option = {
+          tooltip : {
+              trigger: 'axis'
+          },
+          legend: {
+              bottom:true,
+              data:versionArr||0
+          },
+          grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '15%',
+              containLabel: true
+          },
+          xAxis : [
+              {
+                  type : 'category',
+                  boundaryGap : false,
+                  splitLine: {
+                    show: true,
+                    lineStyle: {
+                      type: 'solid'
+                  }
+              },
+                  data : dateArr||0
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value'
+              }
+          ],
+          series : [
+              {
+                  name:versionArr[0]||0,
+                  type:'line',
+                  zlevel: 10,
+                  itemStyle: {
+                    normal: {
+                      color: 'rgb(0, 153, 204)'
+                    }
+                  },
+                  data:arr1
+              },
+              {
+                  name:versionArr[1]||0,
+                  type:'line',
+                  itemStyle: {
+                    normal: {
+                      color: 'rgb(204, 204, 204)'
+                    }
+                  },
+                  data:arr2||0
+              }
+          ]
+      }
+      return option;
+  }
+
+let state = "ACTIVEUSER"
+
+export default class VersionView extends Component{
+
+	constructor(props){
+		super(props)
+    this.state = {
+        "platform":"1",
+        "beginTime":"20170501",
+        "appkey":"sads213",
+        "endTime":"20170508"
+    }
+	}
+  componentWillMount(){
+    const { version,versionTablelist } = this.props  
+    const tableList = {
+        "platform":"1",
+        "beginTime":"20170502",
+        "appkey":"sads213",
+        "endTime":"20170502"
+    }
+    NProgress.start()
+    version(this.state,state,() => {
+        NProgress.done()
+        message.info('请求发送成功')
+      }, () => {
+        NProgress.done()
+        message.info('请求发送失败')
+    })
+    versionTablelist(tableList,state,() => {
+        NProgress.done()
+        message.info('请求发送成功')
+      }, () => {
+        NProgress.done()
+        message.info('请求发送失败')
+    })
+  }
+	onChange(pagination, filters, sorter){
+		console.log('params', pagination, filters, sorter);
+	}
+  handleClick(e) {
+    const childs = e.currentTarget.parentNode.childNodes
+    for(let i = 0; i < childs.length; i++){
+      childs[i].classList.remove('active')
+    }
+    e.currentTarget.classList.add('active')
+    let state = e.currentTarget.getAttribute("data-value")
+    const { version } = this.props
+        NProgress.start()
+        version(this.state,state,() => {
+          NProgress.done()
+          message.info('请求发送成功')
+        }, () => {
+          NProgress.done()
+          message.info('请求发送失败')
+    })
+  }
+  handleChange1(dateString){
+    const { version ,str } = this.props
+    this.setState({
+              "platform":"1",
+              "beginTime":dateString,
+              "appkey":"sads213",
+              "endTime":this.state.endTime
+          }
+      )
+      version(this.state,str,() => {
+            NProgress.done()
+            message.info('请求发送成功')
+        }, () => {
+            NProgress.done()
+            message.info('请求发送失败')
+        })
+  }
+  handleChange2(dateString){
+    const { version ,str } = this.props
+    this.setState({
+              "platform":"1",
+              "beginTime":this.state.beginTime,
+              "appkey":"sads213",
+              "endTime":dateString
+          }
+      )
+      version(this.state,str,() => {
+            NProgress.done()
+            message.info('请求发送成功')
+        }, () => {
+            NProgress.done()
+            message.info('请求发送失败')
+        })
+  }
+  
+	render(){
+      const date = new Date(),
+        year = date.getFullYear(),
+        month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+        lastMonth = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+        day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+        preday = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+        lMonth = `${year}-${lastMonth}-${day}`,
+        yesterday = `${year}-${month}-${preday}`;
+      const { dateArr,versionArr,arr1,arr2 ,dataTable} = this.props
+      console.log(this.props)
+		return(
+				<div className="ver">
+					<div className="top">
+						<div className="vera verw">
+							<h4>版本分布</h4>
+						</div>
+						<div className="verb verw">
+						    <DatePicker size="default" defaultValue={moment(lMonth, 'YYYY-MM-DD')}  onChange = { (date, dateString) => { this.handleChange1(dateString) } }/>
+                {`  至  `}
+                <DatePicker size="default" defaultValue={moment(yesterday, 'YYYY-MM-DD')}  onChange = { (date, dateString) => { this.handleChange2(dateString) } }/>
+						</div>
+					</div>
+					<div className="mid">
+						<div className="row1">
+							<ul>
+								<li style={{width:"12.5%"}} className="active" onClick={ e => this.handleClick(e)} data-value="ACTIVEUSER">活跃用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} data-value="ADDUSER">新增用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} >升级用户</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} data-value="ADDUSER">登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} data-value="LOGINMEMBER">新登录会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)}>新注册会员</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} data-value="PERSTARTTIMES">人均启动次数</li>
+								<li style={{width:"12.5%"}} onClick={ e => this.handleClick(e)} data-value="PERUSERTIMES">次均使用时长(秒)</li>
+							</ul>
+						</div>
+						<div className="row2">
+							<div className="r1">趋势图</div>
+							<div className="r2">
+							</div>
+							<div className="r3">
+								选择版本:
+							</div>
+							<div className="r4">
+								<Input placeholder="请选择"/>
+							</div>
+						</div>
+						<div className="row3">
+							<ReactEcharts
+	                        option={getOtion(dateArr,versionArr,arr1,arr2)} 
+	                        style={{height: '350px', width: '100%'}} 
+	                        className='react_for_echarts' />
+						</div>
+					</div>
+					<div className="bottom">
+						<div className="row1">
+							<div className="l1">数据表</div>					
+							<div className="l3">
+								<Button>导出</Button>
+							</div>
+              <div className="l2">
+                <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} />
+              </div>
+						</div>
+						<div className="row2">
+							<Table columns={columns} pagination={false} dataSource={dataTable} onChange={this.onChange} className="bb"/>
+						  <div className="tableFooter"></div>
+            </div>
+					</div>
+				</div>
+			)
+	}
+}

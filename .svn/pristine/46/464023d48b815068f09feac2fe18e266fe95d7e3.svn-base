@@ -1,0 +1,13 @@
+import connect from 'STORE/connect'
+import HeaderView from './HeaderView'
+
+export default connect(
+
+  state => ({}),
+
+  {},
+  
+  HeaderView
+)
+
+

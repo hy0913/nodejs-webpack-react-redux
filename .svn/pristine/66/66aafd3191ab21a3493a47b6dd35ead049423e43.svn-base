@@ -1,0 +1,14 @@
+import connect from 'STORE/connect'
+import DownloadSDK from './DownloadSDK'
+
+
+export default connect(
+
+  state => ({
+  	
+  }),
+  {
+  	
+  }, 
+  DownloadSDK
+)

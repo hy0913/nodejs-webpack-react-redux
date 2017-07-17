@@ -1,0 +1,152 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import NProgress from 'nprogress'
+import { Modal, Button, Input, Select, Checkbox, Tooltip, Icon, message, Table } from 'antd'
+import './channelManage.scss'
+const { Option, OptGroup } = Select
+
+
+export default class ChannelManageView extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      createChannel: false,
+      confirmLoading: false,
+      channelName: '',
+      channelType: '',
+      channelId: '',
+      platform: '1',
+      appkey: sessionStorage.getItem('appkey')
+    }
+  }
+  componentWillMount() {
+    const { selectChannel } = this.props
+    selectChannel(this.state, () => {
+      NProgress.done()
+      message.info('请求成功')
+    }, () => {
+      NProgress.done()
+      message.info('请求失败')
+    })
+  }
+  componentDidMount() {
+
+  }
+  handleOk1(e) {
+    this.setState({
+      confirmLoading: true
+    })
+    const { createChannel } = this.props
+    createChannel(this.state, () => {
+      message.success('创建成功')
+      setTimeout(() => {
+        this.setState({
+          createChannel: false,
+          confirmLoading: false,
+        });
+      }, 500);
+    }, () => {
+      message.error('创建失败')
+      this.setState({
+          confirmLoading: false
+      });
+    })
+  }
+  handleCancel1(e) {
+    console.log(e)
+    this.setState({createChannel: false})
+  }
+  handleChange(value) {
+    console.log(value)
+    this.setState({
+      channelType: value
+    })
+  }
+  render() {
+    const slelectList = []
+    const columns = [{
+        title: '渠道类型',
+        dataIndex: 'channelStyle'
+      }, {
+        title: '渠道名称',
+        dataIndex: 'channelName'
+      }, {
+        title: '渠道ID',
+        dataIndex: 'channelID'
+      },{
+        title: '申请人',
+        dataIndex: 'applicant'
+      },{
+        title: '申请日期',
+        dataIndex: 'applicationTime'
+      }]
+    const selectList = ['大互联网','AppStore']
+    return (
+      <div className="channelManage">
+					<div className="row1">
+            <div>
+              <h5 className="title">
+                渠道管理
+                <Tooltip placement="right" title="渠道管理">
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </h5>
+              <Button type="primary" onClick={(e) => {this.setState({createChannel: true})}}>新建渠道</Button>
+            </div>
+            <div className="tb">
+              <table>
+                <tbody>
+                  <tr style={{'background':'#F5F6FA','color':'#666'}}>
+                    <td style={{'width':'15%'}}>渠道类型</td>
+                    <td style={{'width':'15%'}}>渠道名称</td>
+                    <td style={{'width':'15%'}}>渠道ID</td>
+                    <td style={{'width':'15%'}}>申请人</td>
+                    <td style={{'width':'15%'}}>申请日期</td>
+                    <td style={{'width':'25%','textAlign':'right','paddingRight':'18px'}}>操作</td>
+                  </tr>
+                  <tr>
+                    <td style={{'width':'15%'}}>大互联网</td>
+                    <td style={{'width':'15%'}}>牛B</td>
+                    <td style={{'width':'15%'}}>10000001</td>
+                    <td style={{'width':'15%'}}>admin</td>
+                    <td style={{'width':'15%'}}>2017-05-16</td>
+                    <td style={{'width':'25%','textAlign':'right'}}>
+                      <span onClick={(e) => this.manage(e)}>管理</span>
+                      <span onClick={(e) => this.delete(e)}>删除</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <Modal 
+              title="新增渠道"
+              visible={this.state.createChannel}
+              onOk={(e) => this.handleOk1(e)} 
+              onCancel={(e) => this.handleCancel1(e)}
+              confirmLoading={this.state.confirmLoading}
+              okText="确定" cancelText="取消"
+            >
+              <div className='list'>
+                <span className='title'><b style={{color: '#F00'}}>*</b> 渠道名称：</span>
+                <Input placeholder="请输入渠道名称" onChange={(e) => this.setState({channelName: e.target.value})} />
+              </div>
+              <div className='list'>
+                <span className='title'><b style={{color: '#F00'}}>*</b> 渠道类型：</span>
+                <Select
+                  showSearch
+                  style={{ width: '60%' }}
+                  onChange={ (e, value) => this.handleChange(e, value) }
+                >
+                  {
+                    selectList.map((item, index) => {
+                      return <Option value={item} key={index}>{item}</Option>
+                    })
+                  }
+                </Select>
+              </div>
+            </Modal>
+        </div>
+			</div>
+    )
+  }
+}

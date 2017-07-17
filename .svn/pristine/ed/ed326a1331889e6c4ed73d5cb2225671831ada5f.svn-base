@@ -1,0 +1,62 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import NProgress from 'nprogress'
+import { Modal, Button, Input, Select, Checkbox, Tooltip, Icon, message, Table } from 'antd'
+import './channelManage.scss'
+const { Option, OptGroup } = Select
+
+
+export default class ChannelManageView extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+  componentWillMount() {
+
+  }
+  componentDidMount() {
+
+  }
+  render() {
+    const slelectList = []
+    const columns = [{
+        title: '渠道类型',
+        dataIndex: 'channelStyle'
+      }, {
+        title: '合作方',
+        dataIndex: 'partner'
+      }, {
+        title: '渠道ID',
+        dataIndex: 'channelID'
+      },{
+        title: '申请人',
+        dataIndex: 'applicant'
+      },{
+        title: '申请日期',
+        dataIndex: 'applicationTime'
+      }];
+    return (
+      <div className="channelManage">
+					<div className="row1">
+            <div>
+              <h5 className="title">
+                渠道管理
+                <Tooltip placement="right" title="渠道管理">
+                  <Icon type="question-circle" />
+                </Tooltip>
+              </h5>
+              <Button type="primary">新建渠道</Button>
+            </div>
+            <div className="row2">
+              <Table
+                size="middle"
+                columns={columns}
+                className="tableContent"
+                onChange={this.handleChange}
+              />
+            </div>
+        </div>
+			</div>
+    )
+  }
+}

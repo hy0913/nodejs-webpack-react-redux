@@ -1,0 +1,14 @@
+import connect from 'STORE/connect'
+import ApplistView from './ApplistView'
+
+
+export default connect(
+
+  state => ({
+  	
+  }),
+  {
+  	
+  }, 
+  ApplistView
+)

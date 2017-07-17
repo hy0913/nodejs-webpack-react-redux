@@ -1,0 +1,15 @@
+import connect from 'STORE/connect'
+import { selectAppList } from 'REDUCER/applist'
+import ApplistView from './ApplistView'
+
+
+export default connect(
+
+  state => ({
+  	state: state
+  }),
+  {
+  	selectAppList
+  },
+  ApplistView
+)

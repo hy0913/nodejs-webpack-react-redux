@@ -1,0 +1,15 @@
+import connect from 'STORE/connect'
+import RegionView from './RegionView'
+import { region } from 'REDUCER/region'
+
+export default connect(
+	state => ({
+
+	}),
+
+	{
+		region
+	},
+	
+	RegionView
+)

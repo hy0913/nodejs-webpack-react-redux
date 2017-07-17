@@ -1,0 +1,36 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { regionAction } from './request/region'
+
+export const region = (data, success, fail) => (dispatch, getState) => {
+	const newData = {
+    	platform: data.platform,
+    	appkey: data.appkey,
+    	dateTime: data.dateTime,
+    	appVersion: data.appVersion,
+      interfaceName: data.interfaceName,
+      eventIdentifier: data.eventIdentifier
+  	}
+  	dispatch(regionAction(newData)).then(action => {
+  		NProgress.done()
+    	const dataBody = action.data.body
+    	console.log(dataBody)
+  	})
+}
+
+const initialState = {
+  
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'REGION':
+      return {
+      	...state
+      }
+    default:
+      return state
+  }
+}

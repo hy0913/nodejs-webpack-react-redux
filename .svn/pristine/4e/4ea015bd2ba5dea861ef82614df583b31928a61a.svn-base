@@ -1,0 +1,13 @@
+import connect from 'STORE/connect'
+import UserRetainView from './UserRetainView'
+import { userRetain } from 'REDUCER/userRetain'
+
+export default connect(
+	state => ({
+		
+	}),
+	{
+		userRetain
+	},
+	UserRetainView
+)

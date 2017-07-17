@@ -1,0 +1,14 @@
+import connect from 'STORE/connect'
+import VersionView from './VersionView'
+import { version } from 'REDUCER/version'
+
+export default connect(
+	state => ({
+
+	}),
+
+	{
+		version
+	},
+	VersionView
+)

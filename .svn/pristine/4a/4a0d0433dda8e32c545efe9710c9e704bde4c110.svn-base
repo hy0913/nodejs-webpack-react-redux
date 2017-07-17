@@ -1,0 +1,16 @@
+import connect from 'STORE/connect'
+import ChannelAnalysisView from './ChannelAnalysisView'
+import { getTableData, getChartData } from 'REDUCER/channelAnalysis'
+
+export default connect(
+  state => ({
+    state: state.channelAnalysis
+  }),
+
+  {
+	getTableData, 
+	getChartData
+  }, 
+
+  ChannelAnalysisView
+)

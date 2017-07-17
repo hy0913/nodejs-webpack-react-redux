@@ -1,0 +1,74 @@
+.applist{
+	font-size:14px;
+	.top{
+		margin: 0 10px 15px;
+		padding: 16px 0;
+		border-bottom:  1px solid #ddd;
+		.list{
+			border-left:2px solid #88B7E0;
+			display: inline-block;
+    		text-indent: 8px;
+    		font-weight: bold;
+    		margin-right:50px;
+		}
+		.btn1{
+			padding: 8px 12px;
+			display: inline-block;
+		    border: 1px solid #546478;
+		    background-color: #546478;
+		    color: #FFFFFF;
+		    margin-right:10px;
+		    cursor: pointer;
+		}
+		.btn2{
+			display: inline-block;
+		    padding: 8px 12px;
+		    border-radius: 0px;
+		    border: 1px solid #D9DEE4;
+		    background-color: #D9DEE4;
+		    color: #666;
+		    cursor: pointer;
+		}
+		.btn3{
+			padding: 8px 12px;
+			display: inline-block;
+		    border: 1px solid #00a2ca;
+		    background-color: #00a2ca;
+		    color: #FFFFFF;
+		    float: right;
+		    cursor: pointer;
+		}
+	}
+	.tb{
+		color:#00a2ca;
+		margin: 0 10px;
+		height: 40px;
+		table{
+			width: 100%;
+			height: 40px;
+			border:1px solid #ddd;
+			border-bottom:none;
+			border-collapse:collapse;
+			tbody{
+			    background-color: #fff;
+			    width: 100%;
+			    height: 40px;
+			    tr{	   		
+		    		td{
+						padding:10px 8px;
+						width: 25%;
+						border-bottom:1px solid #ddd;
+						span{
+							cursor: pointer;
+							padding: 0 10px;
+							border-right:1px solid #00a2ca;
+						}
+						span:last-child{
+							border-right:none;
+						}
+					}
+			    }				    
+			}	
+		}				
+	}
+}

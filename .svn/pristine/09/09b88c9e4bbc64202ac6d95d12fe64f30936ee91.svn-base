@@ -1,0 +1,105 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { applicationTrendAction } from './request/applicationTrend'
+
+const APPLICATIONTREND = 'APPLICATIONTREND';
+let arr1 = [],arr2 = [],arr3 = [],arr4 = [],arr5 = [],dateArr = [];
+
+export const applicationTrend = (data, success, fail) => (dispatch, getState) => {
+    const newData = {
+      platform: data.platform,
+      appkey: data.appkey,
+      beginTime: data.beginTime,
+      endTime: data.endTime,
+      appVersion: data.appVersion,
+      currentPage: data.currentPage,
+      turnPageShowNum: data.turnPageShowNum
+    }   
+    dispatch(applicationTrendAction(newData)).then(action => {
+      NProgress.done()
+      const dataBody = action.data.body
+      if(dataBody.errorCode == '0'){
+        success()
+        const appTrendTable = dataBody.appTrendTable
+        //1、活跃用户 2、新增用户 3、登录会员 4、人均启动次数 5、次均使用时长      
+        appTrendTable.forEach((item) => {
+          arr1.push(item.activeUser)
+          arr2.push(item.addUser)
+          arr3.push(item.loginMember)
+          arr4.push(item.perStartTimes)
+          arr5.push(item.perUserTime)
+          dateArr.push(item.date)
+        })
+        dispatch({
+           "type": APPLICATIONTREND,
+           "data":{
+              "appTrendTable":appTrendTable,
+              "arr1":arr1,
+              "dateArr":dateArr
+           }
+        })
+      }else{
+        fail()
+      }         
+    })
+}
+
+export const menuTab = (newState) => (dispatch,getState) => {
+  console.log(newState)
+  switch(newState){
+    case 'ACTIVEUSER': return arr1 = arr1            
+    case 'ADDUSER': return arr1 = arr2            
+    case 'LOGINMEMBER': return arr1 = arr3      
+    case 'PERSTARTTIMES': return arr1 = arr4   
+    case 'PERUSERTIMES':  return arr1 = arr5          
+  }
+  dispatch({
+     "type": newState,
+     "data":{
+        "arr1":arr1
+     }
+  })
+}
+
+const initialState = {
+
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'APPLICATIONTREND':
+      return {
+        ...state,
+        ...action.data
+      }
+    case 'ACTIVEUSER':
+      return {
+        ...state,
+        ...action.data
+      }
+    case 'ADDUSER':
+      return {
+        ...state,
+        ...action.data
+      }
+    case 'LOGINMEMBER':
+      return {
+        ...state,
+        ...action.data
+      }
+    case 'PERSTARTTIMES':
+      return {
+        ...state,
+        ...action.data
+      }
+    case 'PERUSERTIMES':
+      return {
+        ...state,
+        ...action.data
+      }
+    default:
+      return state
+  }
+}

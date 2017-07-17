@@ -1,0 +1,84 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { Button } from 'antd'
+import './ApplistView.scss'
+
+
+export default class ApplistView extends Component {
+	constructor(props){
+		super(props)
+	}
+	componentWillMount() {
+	}
+	resetStateList() {
+    	
+	}
+	handleClick(){
+		console.log(123)
+	}
+	render () {
+		return (
+				<div className="applist">
+					<div className="top">
+						<div className="list">APP列表</div>
+						<div className="btn1">我创建的APP</div>
+						<div className="btn2">被授权的APP</div>
+						<div className="btn3">创建APP</div>
+					</div>
+					<div className="tb">
+						<table border="0">
+							<tbody align="center">
+								<tr style={{'background':'#F5F6FA','color':'#666'}}>
+									<td style={{'width':'30%'}}>APP名称</td>
+									<td style={{'width':'10%'}}>分类</td>
+									<td style={{'width':'20%'}}>状态</td>
+									<td style={{'width':'40%','text-align':'right','padding-right':'18px'}}>操作</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>我的金融生活</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>金融生活平台</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>Flame</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>Flame123</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>			
+			)
+	
+	}
+}

@@ -1,0 +1,36 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { versionAction } from './request/version'
+
+export const version = (data, success, fail) => (dispatch, getState) => {
+  const newData = {
+      platform: data.platform,
+      appkey: data.appkey,
+      dateTime: data.dateTime,
+      appVersion: data.appVersion,
+      interfaceName: data.interfaceName,
+      eventIdentifier: data.eventIdentifier
+    }
+    dispatch(versionAction(newData)).then(action => {
+      NProgress.done()
+      const dataBody = action.data.body
+      console.log(dataBody)
+    })
+}
+
+const initialState = {
+  
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'REGION':
+      return {
+        ...state
+      }
+    default:
+      return state
+  }
+}

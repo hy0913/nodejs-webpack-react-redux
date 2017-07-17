@@ -1,0 +1,10 @@
+import connect from 'STORE/connect'
+import UserActivity from './UserActivity'
+
+export default connect(
+	state => ({
+
+	}),
+	{},
+	UserActivity
+)

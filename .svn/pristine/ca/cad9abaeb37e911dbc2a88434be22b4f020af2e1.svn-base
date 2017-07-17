@@ -1,0 +1,12 @@
+import connect from 'STORE/connect'
+import eventDetailsView from './eventDetailsView'
+
+export default connect(
+	state => ({
+		
+	}),
+	{
+		
+	},
+	eventDetailsView
+)

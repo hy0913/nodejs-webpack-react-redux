@@ -1,0 +1,30 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import { userRetainAction } from './request/userRetain'
+
+export const userRetain = (data,suc,fail) => (dispatch,getState)=> {
+    dispatch(userRetainAction(data)).then(action => {
+      console.log(action)
+      if(action.data.body.errorCode == '0'){
+
+      }else{
+        fail()
+      }
+    })          
+}
+
+let initialState= {
+
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'USERRETAIN':
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
+}

@@ -1,0 +1,77 @@
+/**
+ * Created by Alex on 2017/5/21.
+ */
+import NProgress from 'nprogress'
+import { realCrashDynamicAction, realCrashChartAction } from './request/realCrash'
+
+const GET_TAB_DATA = 'GET_TAB_DATA'
+
+export const realCrashDynamic = () => (dispatch, getState) => {
+  const reqData = getState().realCrash.reqData.dynamic
+  dispatch(realCrashDynamicAction(reqData)).then(action => {
+    // NProgress.start()
+    console.log(action)
+    if (action.data.body.errorCode === '0') {
+      console.log('********************')
+      dispatch({
+        type: GET_TAB_DATA,
+        data: action.data.body.crashPercentList
+      })
+    }
+  })
+}
+
+export const realCrashChart = () => (dispatch, getState) => {
+  const reqData = getState().realCrash.reqData.chart
+  dispatch(realCrashChartAction(reqData)).then(action => {
+    // NProgress.start()
+    console.log(action)
+    if (action.data.body.errorCode === '0') {
+      console.log('********************')
+      console.log(action.data.body)
+
+    }
+  })
+}
+
+const initialState = {
+  reqData: {
+    dynamic: {
+      "ec_ranges_start": "1",
+      "ec_ranges_end": "1",
+      "ec_app_version": "all",
+      "ec_appKey": "1",
+      "ec_platform": "1"
+    },
+    chart: {
+      "ec_ranges_start": "1",
+      "ec_app_version": "all",
+      "ec_appKey": "1",
+      "ec_platform": "1",
+      "ec_tab": "crash_user_percent",
+      "tranTime": "19",
+      "endTime": "1",
+      "beginTime": "1",
+    }
+  },
+  tabData: [
+    {"current": "1", "yestoday": "1", "lastweek": "1"},
+    {"current": "1", "yestoday": "1", "lastweek": "1"},
+    {"current": "1", "yestoday": "1", "lastweek": "1"},
+    {"current": "1", "yestoday": "1", "lastweek": "1"},
+  ]
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+
+    case GET_TAB_DATA:
+      return {
+        ...state,
+        tabData: action.data
+      }
+
+    default:
+      return state
+  }
+}

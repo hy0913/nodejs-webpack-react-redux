@@ -1,0 +1,15 @@
+import connect from 'STORE/connect'
+import OnlineParamView from './OnlineParam'
+
+export default connect(
+
+  state => ({
+	 state: {}
+  }),
+
+  {
+   	
+  },
+
+  OnlineParamView
+)

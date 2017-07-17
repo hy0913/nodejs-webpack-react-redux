@@ -1,0 +1,140 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import './userActivity.scss'
+import { Button, Icon, Select, Input, DatePicker, Table, message, Tooltip } from 'antd'
+import { today, yesterday, lastWeekY, lMonthY } from 'GLOBAL'
+import moment from 'moment'
+import ReactEcharts from 'echarts-for-react'
+import { getOption6 } from '../../option/todayDetails'
+const { Option, OptGroup } = Select;
+const Search = Input.Search;
+
+export default class UserActivity extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {}
+	}
+	handleClick(e) {
+		const childs = e.currentTarget.parentNode.parentNode.childNodes
+		for (let i = 0; i < childs.length; i++) {
+			childs[i].classList.remove('active')
+		}
+		e.currentTarget.parentNode.classList.add('active')
+	}
+	render() {
+		const columns = [{
+			title: '时间',
+			dataIndex: 'date',
+			sorter: (a, b) => a.date - b.date
+		}, {
+			title: '活跃用户',
+			dataIndex: 'activeUser',
+			sorter: (a, b) => a.activeUser - b.activeUser
+		}, {
+			title: '新增用户',
+			dataIndex: 'addUser',
+			sorter: (a, b) => a.addUser - b.addUser
+		}, {
+			title: '登录会员',
+			dataIndex: 'loginMember',
+			sorter: (a, b) => a.loginMember - b.loginMember
+		}, {
+			title: '人均启动次数',
+			dataIndex: 'perStartTimes',
+			sorter: (a, b) => a.perStartTimes - b.perStartTimes
+		}, {
+			title: '次均使用时长(秒)',
+			dataIndex: 'perUserTime',
+			sorter: (a, b) => a.perUserTime - b.perUserTime
+		}];
+		const tableData = [{
+			key: '1',
+			date: '00:00-01:00',
+			activeUser: '1',
+			addUser: '0',
+			loginMember: '1',
+			perStartTimes: '222',
+			perUserTime: '111'
+		}]
+		return (
+			<div className="userActivity">
+				<div className="row1">
+					<div>
+						<h5 className="title">
+							用户活跃度
+							<Tooltip placement="right" title="用户活跃度">
+        						<Icon type="question-circle" />
+      						</Tooltip>
+						</h5>
+						<div>
+  							<DatePicker size="default" defaultValue={moment(lMonthY, 'YYYY-MM-DD')} />
+  							{`  至  `}
+  							<DatePicker size="default" defaultValue={moment(yesterday, 'YYYY-MM-DD')} />
+  						</div>
+						<Select
+    						showSearch
+    						style={{ float: 'right', marginRight: 20 }}
+    						defaultValue="all"
+  						>
+    						<Option value="all">全部版本</Option>
+    						<Option value="6.8">6.8</Option>
+    						<Option value="6.7">6.7</Option>
+  						</Select>
+  						<div>
+  							<span style={{ display: 'inline-block', height: '28px', lineHeight: '28px', marginRight: '5px' }}>选择起始时间：</span>
+  							<Select
+    							showSearch
+    							style={{ float: 'right', marginRight: 20 }}
+    							defaultValue="firstTime"
+  							>
+    							<Option value="firstTime">2012-01-01(最开始)</Option>
+    							<Option value="halfYearAgo">2016-11-06(半年前)</Option>
+    							<Option value="threeMonthAgo">2017-02-04(三月前)</Option>
+    							<Option value="oneMonthAgo">2017-04-05(一月前)</Option>
+    							<Option value="oneWeekAgo">2017-04-05(一周前)</Option>
+  							</Select>
+  						</div>
+					</div>
+				</div>
+
+				<div className="row2">
+					<ul className="nav">
+						<li className="active">
+							<a className="fz12" onClick={e => this.handleClick(e)}>日活跃度</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)}>周活跃度</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)}>月活跃度</a>
+						</li>
+					</ul>
+				</div>
+				<div className="row3">
+					<div>
+						<ReactEcharts
+                        	option={getOption6()} 
+                        	style={{height: '435px', width: '100%', marginTop: '5px', marginRight: 0 }} 
+                        	className='react_for_echarts' 
+                        	onChartReady = {chart => {setTimeout(function(){chart.resize()},0)}}
+                        />
+					</div>
+				</div>
+				<div className="row4">
+					<div className="tableTitle">
+						<div className="tableTitleText">数据表</div>
+						<div className="rightBtn">
+							<Button>导出</Button>
+						</div>
+					</div>
+					<Table
+    					columns={columns}
+    					dataSource={tableData}
+    					className="tableContent"
+    					onChange={this.handleChange}
+ 					/>
+				</div>
+			</div>
+		)
+	}
+}

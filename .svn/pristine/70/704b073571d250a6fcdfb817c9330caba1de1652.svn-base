@@ -1,0 +1,14 @@
+import { injectReducer } from 'STORE/reducers'
+
+export default store => ({
+  path: 'channelManage.html',
+
+  getComponent(nextState, cb) {
+    require.ensure([], (require) => {
+      const ChannelManage = require('VIEW/ChannelManage').default
+      // const reducer = require('REDUCER/channelAnalysis').default
+      // injectReducer(store, { key: 'channelAnalysis', reducer })
+      cb(null, ChannelManage)
+    }, 'ChannelManage')
+  }
+})

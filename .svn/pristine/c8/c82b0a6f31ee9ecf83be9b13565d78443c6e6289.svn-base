@@ -1,0 +1,109 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { versionAction } from './request/version'
+import { turnHundred } from './region'
+import { sortByKey } from './applicationTrend'
+
+let dateArr=[],versionArr=[],arr1=[],arr2 =[],stateNow; 
+
+export const version = (data,state,success, fail) => (dispatch, getState) => {
+    dateArr = [],versionArr =[],arr1=[],arr2 =[];
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime,
+      appkey: data.appkey,
+      endTime: data.endTime
+    }
+    console.log(state)       
+    dispatch(versionAction(newData)).then(action => {
+      NProgress.done()    
+      if(action.data.body.errorCode == "0"){
+        const versionAnalysisList = action.data.body.versionAnalysisList
+        let dateArr =[],versionArr = [],seriesData={}, series=[], userArr =[],date = '',arrLength='',appVersion=''
+        versionAnalysisList.map((item,i)=>{
+          item.versionAnalysisBack.map((item,i,arr) => {
+            appVersion = item.appVersion
+            arrLength = arr.length
+            if(userArr.length < arrLength){
+              userArr.push(item[state])
+            }
+            if(dateArr.length < arrLength){
+              dateArr.push(item.date)
+            }           
+          })
+          seriesData[i] = userArr
+          userArr = []
+          versionArr.push(appVersion)
+        })
+        for(var i=0; i<versionAnalysisList.length;i++){
+          series.push({
+                name: versionArr[i],
+                type: 'line',
+                symbol: 'circle',
+                symbolSize: 8,
+                data: seriesData[i]
+            })
+        }
+        console.log(dateArr,versionArr,seriesData)  
+        dispatch({
+          type:"VERSION",
+          dateArr,
+          versionArr,
+          series,
+          str:state
+        })
+      }else{
+        fail()
+      }
+            
+    })
+}
+
+export const versionTablelist = (data,suc,fail) => (dispatch,getState)=> {
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime,
+      appkey: data.appkey,
+      endTime: data.endTime
+    }
+    let arrUsers =[],arrAddUsers = []
+    dispatch(versionAction(newData)).then(action => {
+      const table = action.data.body.versionAnalysisList,dataTable = []
+      table.forEach((item) =>{
+        dataTable.push(item.versionAnalysisBack[0])
+      })
+      dataTable.forEach((item) => {
+        arrUsers += item.activeUser
+        arrAddUsers += item.addUser
+      })
+      dataTable.forEach((item) => {
+        item.zb1 = turnHundred(item.activeUser,arrUsers)
+        item.zb2 = turnHundred(item.addUser,arrAddUsers)
+      })
+      dispatch({
+        type:"VERSION",
+        dataTable
+      })
+    })
+}
+const initialState = {
+    dateArr:[],
+    versionArr:[],
+    str:'',
+    dataTable:[],
+    series:[]
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'VERSION':
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
+}

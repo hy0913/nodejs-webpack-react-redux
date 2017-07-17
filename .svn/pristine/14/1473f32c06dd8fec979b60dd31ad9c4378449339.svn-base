@@ -1,0 +1,37 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { Button } from 'antd'
+import './downloadSDK.scss'
+
+export default class DownloadSDK extends Component {
+	constructor(props){
+		super(props)
+		this.state = {}
+	}
+	componentWillMount() {
+
+	}
+	componentDidMount() {
+
+	}
+	render() {
+		return (
+			<div className="downloadSDK">
+				<div className="title">
+					<h5 className="fz14">OneSDK 打包记录 <span className="fz12">（最近五次）</span></h5>
+				</div>
+				<table>
+					<tbody>
+						<tr>
+							<td>2017-05-15 16:07:30</td>
+							<td>iOS</td>
+							<td>移动数据分析</td>
+							<td>打包完成</td>
+							<td>下载</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		)
+	}
+}

@@ -1,0 +1,351 @@
+import React, { Component, PropTypes } from 'react'
+import { Table, Row, Col, Button, Modal, DatePicker, Dropdown, Icon, message, Select } from 'antd'
+import ReactEcharts from 'echarts-for-react';
+import 'STYLE/pages/resolution.scss'
+const { RangePicker } = DatePicker
+
+const disabledDate = current => current && current.valueOf() > Date.now()
+
+export default class OsVersion extends Component {
+	constructor(props){
+		super(props)
+	}
+	getOtion() {
+        const option = {
+            title: {
+                text: ''
+            },
+            tooltip : {
+                trigger: 'axis'
+            },
+            legend: {
+                bottom: 10,
+                data:['6.0','5.1','5.1.1','4.4.2','4.2.2']
+            },
+            toolbox: {
+                feature: {
+                    
+                }
+            },
+            grid: {
+            	show: true,
+            	top: '5%',
+                left: '5%',
+                right: '5%',
+                bottom: '20%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : ['3/26','3/27','3/28','3/29','3/30','4/01','4/02','4/03','4/04','4/05','4/06']
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'6.0',
+                    type:'line',
+                    data:[320, 132, 301, 445, 90, 230, 210, 132, 111, 184, 70]
+                },
+                {
+                    name:'5.1',
+                    type:'line',
+                    data:[220, 182, 191, 234, 290, 330, 310, 200, 100, 139, 175]
+                },
+                {
+                    name:'5.1.1',
+                    type:'line',
+                    data:[150, 232, 201, 154, 190, 339, 410, 201, 139, 191, 234]
+                },
+                {
+                    name:'4.4.2',
+                    type:'line',
+                    data:[230, 632, 101, 354, 190, 330, 410, 190, 190, 398, 102]
+                },
+                {
+                    name:'4.2.2',
+                    type:'line',
+                    data:[350, 432, 201, 154, 150, 230, 110, 791, 234, 394, 340]
+                }
+            ]
+        };
+        return option;
+    }
+
+	handleClick(e){
+		const childs = e.currentTarget.parentNode.childNodes;
+		for(let i=0; i < childs.length; i++){
+			childs[i].classList.remove('active');
+		}
+		e.currentTarget.classList.add('active');
+	}
+	outputClick(){
+		message.warning("正在导出文件...")
+		
+	}
+	onSearch(roleName) {
+	    // const { getInfoByRoleName } = this.props
+	    // getInfoByRoleName(roleName)
+  	}
+
+  
+	handleTopClick() {
+
+	}
+	render(){
+		const columns = [{
+	      title: '操作系统版本',
+	      dataIndex: 'version',
+	      key: 'version',
+	      sorter: (a, b) => a.name.length - b.name.length,
+	    }, {
+	      title: '活跃用户',
+	      dataIndex: 'active',
+	      key: 'active',
+	      sorter: (a, b) => a.age - b.age,
+	    }, {
+	      title: '新增用户',
+	      dataIndex: 'new',
+	      key: 'new',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '升级用户',
+	      dataIndex: 'update',
+	      key: 'update',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '登录会员',
+	      dataIndex: 'logined',
+	      key: 'logined',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '新登录会员',
+	      dataIndex: 'logining',
+	      key: 'logining',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '新注册会员',
+	      dataIndex: 'register',
+	      key: 'register',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '人均启动次数',
+	      dataIndex: 'times',
+	      key: 'times',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    },{
+	      title: '次均使用时长(秒)',
+	      dataIndex: 'duration',
+	      key: 'duration',
+	      sorter: (a, b) => a.address.length - b.address.length,
+	    }];
+
+	    const formatStr = str => {
+	      let paramsArr = str.split(',')
+	      let jsonArr = []
+	      paramsArr.map(item => {
+	        let tmp = {}
+	        let li = item.split('=')
+	        let key = li[0]
+	        let val = li[1]
+	        key ? null : key = '未知'
+	        if (val) {
+	          tmp.key = key
+	          val.indexOf(':') > 0 ? val = val.replace(/:/g, '， ') : null
+	          tmp.value = val
+	          jsonArr.push(tmp)
+	        } else {
+	          jsonArr.push({
+	            key: key,
+	            value: '暂无'
+	          })
+	        }
+	      })
+	      return jsonArr
+    	}  
+
+	    const formatForm = str => formatStr(str).map((item, i) => {
+	      return (
+	        <tr key={i}>
+	          <td style={{ padding: '5px 0', textAlign: 'right', fontWeight: 'bold' }}>{item.key}：</td>
+	          <td style={{ padding: '5px 0' }}>{item.value}</td>
+	        </tr>
+	      )
+    	})
+
+    	const data = [{
+		  key: '1',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		}, {
+		  key: '2',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		}, {
+		  key: '3',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		}, {
+		  key: '4',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		},{
+		  key: '5',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		},{
+		  key: '6',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		},{
+		  key: '7',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		},{
+		  key: '8',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		},{
+		  key: '9',
+		  version: '4.2.2',
+		  active: '3',
+		  new: '0',
+		  update: '0',
+		  logined: '0',
+		  logining: '2',
+		  register: '5',
+		  times: '2',
+		  duration: '8.96'
+		}];
+
+
+    	const { phoneInfoList } = this.props
+
+    	return (
+			<div className='layout-container'>
+				<Row className='header-container'>
+      				<Col span={6} className='fix-left'><h5>操作系统版本分布</h5></Col>
+			      	<Col span={6}></Col>
+			      	<Col span={8}>
+						<div>
+							<RangePicker
+		                      style={{ width: '100%' }}
+		                      format="YYYY/MM/DD" 
+		                      disabledDate={disabledDate}
+		                    />
+      					</div>
+			      	</Col>
+			      	<Col span={4}>
+			      		<Select
+    						showSearch
+    						style={{ width: 150, float: 'right' }}
+    						defaultValue="all"
+  						>
+    						<Option value="all">全部版本</Option>
+    						<Option value="6.8">6.8</Option>
+    						<Option value="6.7">6.7</Option>
+  						</Select>
+			    	</Col>
+    			</Row>	
+    			<ul className='nav-bar'>
+    				<li onClick={e => this.handleClick(e)} className='active'><a>活跃用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新增用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>升级用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>登录会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新登录会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新注册会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>人均启动次数</a></li>
+    				<li onClick={e => this.handleClick(e)} className='last-li'><a>次均使用时长(秒)</a></li>
+    			</ul>
+
+    			<div className='echartBox'>
+    				<div className='echartTitle'>趋势图</div>
+    				<div style={{display:'inline-block',position:'absolute',right:'30px',top:'130px'}}>
+    					<Select
+    						showSearch
+    						style={{ width: 150, float: 'right' }}
+    						defaultValue="top5机型"
+  						>
+    						<Option value="5">top5机型</Option>
+    						<Option value="10">top10机型</Option>
+  						</Select>
+    				</div>
+                    <ReactEcharts
+                        option={this.getOtion()} 
+                        style={{height: '350px', width: '100%'}} 
+                        className='react_for_echarts' />
+                </div>
+
+    			<div className='table-title-bar'>
+	    			<div className='table-title-text'>数据表</div>
+	    			<span className='table-datePicker'><DatePicker /*onChange={this.onChange}*/ /></span>
+	    			
+	    			<div className='outputBtn'><Button onClick={this.outputClick}>导出</Button></div>
+	    		</div>
+				<Table columns={columns} dataSource={data} onChange={this.handleChange} style={{border:'1px solid #e9e9e9'}}/>
+        	</div>
+        )
+	}
+}

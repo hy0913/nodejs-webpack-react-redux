@@ -1,0 +1,54 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { Button } from 'antd'
+import './eventManageView.scss'
+
+
+export default class EventManageView extends Component {
+	constructor(props){
+		super(props)
+	}
+	render () {
+		return (
+				<div className="eve">
+					<div className="top">
+						<div className="list">自定义事件</div>
+						<div className="btn3">添加自定义事件</div>
+					</div>
+					<div className="tb">
+						<table>
+							<tbody>
+								<tr style={{'background':'#F5F6FA','color':'#666'}}>
+									<td style={{'width':'30%'}}>事件ID</td>
+									<td style={{'width':'10%'}}>事件名称</td>
+									<td style={{'width':'20%'}}>事件用途</td>
+									<td style={{'width':'40%'}}>操作</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>我的金融生活</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%'}}>			
+										<span>修改</span>
+										<span>删除</span>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>金融生活平台</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%'}}>			
+										<span>修改</span>
+										<span>删除</span>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>			
+			)
+	
+	}
+}

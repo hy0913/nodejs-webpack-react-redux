@@ -1,0 +1,308 @@
+/**
+ * Created by Alex on 2017/5/11.
+ */
+import NProgress from 'nprogress'
+import { crashTrendAction } from './request/crashTrend'
+
+const GET_STATE_DATA = 'GET_STATE_DATA'
+const GET_CHART_DATA = 'GET_CHART_DATA'
+const CHANGE_VERSION = 'CHANGE_VERSION'
+const CHANGE_STA_TIME = 'CHANGE_STA_TIME'
+const CHANGE_END_TIME = 'CHANGE_END_TIME'
+
+// 请求接口数据
+export const crashTrend = (data = 'userPercent', success, fail) => (dispatch, getState) => {
+  const reqData = getState().crashTrend.reqData
+  dispatch(crashTrendAction(reqData)).then(action => {
+    NProgress.start()
+    const dataBody = action.data.body
+    let sucData
+    switch (data) {
+      case 'userPercent':
+        sucData = {
+          color: ['#88c3e8'],
+          seriesName: 'Crash用户占比',
+          legendData: ['Crash用户占比'],
+          yFormatter: '{value}%',
+          tipFormatter: '{b} <br /> {a} :  {c}%',
+          seriesData: dataBody.countList.map((item) => (item.userPercent))
+        }
+        break
+      case 'clientPercent':
+        sucData = {
+          color: ['#aedd8f'],
+          seriesName: 'crash率',
+          legendData: ['crash率'],
+          yFormatter: '{value}%',
+          tipFormatter: '{b} <br /> {a} :  {c}%',
+          seriesData: dataBody.countList.map((item) => (item.clientPercent))
+        }
+        break
+      case 'crashClient':
+        sucData = {
+          color: ['#0cf'],
+          seriesName: 'Crash次数',
+          legendData: ['Crash次数'],
+          yFormatter: '{value}',
+          tipFormatter: '{b} <br /> {a} :  {c}',
+          seriesData: dataBody.countList.map((item) => (item.crashClient))
+        }
+        break
+      case 'crashUser':
+        sucData = {
+          color: ['#fb3'],
+          seriesName: 'Crash用户数',
+          legendData: ['Crash用户数'],
+          yFormatter: '{value}',
+          tipFormatter: '{b} <br /> {a} :  {c}',
+          seriesData: dataBody.countList.map((item) => (item.crashUser))
+        }
+        break
+    }
+    dispatch({
+      type: GET_CHART_DATA,
+      data: sucData
+    })
+    // success()
+    NProgress.done()
+  })
+}
+
+// 版本选择按钮
+export const verSelect = (ver) => ({
+  type: CHANGE_VERSION,
+  data: ver
+})
+
+export const staTime = (data) => ({
+  type: CHANGE_STA_TIME,
+  data: data
+})
+
+export const endTime = (data) => ({
+  type: CHANGE_END_TIME,
+  data: data
+})
+
+/**
+ * 这个TEST action创建函数，用来更改state.reqData属性，从而改变发起的请求
+ * @param params
+ */
+export const test = (params) => ({
+  type: 'TEST',
+  data: {
+    ec_tab: '2',
+    tranTime: 15,
+    ec_appKey: '2'
+  }
+})
+
+const timer = () => {
+  const oneDay = 1000 * 60 * 60 * 24
+  let current = new Date()
+  current.setHours(0)
+  current.setMinutes(0)
+  current.setSeconds(0)
+  current.setMilliseconds(0)
+  /**
+   * end 是今天早晨0点
+   * start 是30天前早晨0点
+   * 这里的时间和后面的时间保持统一，暂时不管具体天数
+   */
+  let end = current.getTime()
+  let start = end - 30 * oneDay
+  let startDate = start
+
+  let arr = []
+  for (let i = 0; i < 30; i++) {
+    let test = new Date(startDate)
+    let month = (test.getMonth() + 1) < 10 ? '0' + (test.getMonth() + 1) : (test.getMonth() + 1)
+    let day = test.getDate() < 10 ? '0' + test.getDate() : test.getDate()
+    let dateStr = '' + test.getFullYear() + '-' + month + '-' + day
+    arr.push(dateStr)
+    startDate += oneDay
+  }
+  return {
+    start: start + '',
+    end: end + '',
+    xAxis: arr
+  }
+}
+let initObj = timer()
+
+const initialState = {
+  reqData: {
+    ec_tab: '1',
+    tranTime: 30,
+    ec_appKey: '17882660f8d511e6885744a8420bf25c',
+    ec_platform: '1',
+    ec_app_version: 'all',
+    ec_ranges_end: initObj.end,
+    ec_ranges_start: initObj.start
+  },
+  option: {
+    color: [
+      '#88c3e8'
+    ],
+    legend: {
+      data: ['crash用户占比'],
+      bottom: '5%'
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: '{b} <br /> {a} :  {c}%'
+    },
+    grid: {
+      containLabel: true,
+      left: '3%',
+      right: '4%'
+    },
+    xAxis: {
+      type: 'category',
+      splitLine: {
+        show: true,
+        lineStyle: {
+          type: 'solid'
+        }
+      },
+      axisLabel: {
+        textStyle: {
+          color: '#333'
+        },
+        formatter: function (value) {
+          return value.substring(5)
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#09c',
+          width: 2
+        }
+      },
+      axisTick: {
+        lineStyle: {
+          color: '#333'
+        }
+      },
+      boundaryGap: false,
+      data: initObj.xAxis
+    },
+    yAxis: {
+      type: 'value',
+      axisTick: {
+        alignWithLabel: true,
+        show: false
+      },
+      axisLabel: {
+        formatter: '{value} %',
+        textStyle: {
+          color: '#333'
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#09c',
+          width: 2
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          type: 'solid'
+        }
+      }
+    },
+    series: {
+      name: 'crash用户占比',
+      type: 'line',
+      symbol: 'circle',
+      zlevel: 10,
+      data: []
+    }
+  }
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+
+    case GET_STATE_DATA:
+      return {
+        ...state,
+        ...action.data
+      }
+
+    case GET_CHART_DATA:
+      return {
+        ...state,
+        option: {
+          ...state.option,
+          color: action.data.color,
+          legend: {
+            ...state.option.legend,
+            data: action.data.legendData
+          },
+          series: {
+            ...state.option.series,
+            data: action.data.seriesData,
+            name: action.data.seriesName
+          },
+          yAxis: {
+            ...state.option.yAxis,
+            axisLabel: {
+              ...state.option.yAxis.axisLabel,
+              formatter: action.data.yFormatter
+            }
+          },
+          tooltip: {
+            ...state.option.tooltip,
+            formatter: action.data.tipFormatter
+          }
+        }
+      }
+
+    case CHANGE_VERSION:
+      return {
+        ...state,
+        reqData: {
+          ...state.reqData,
+          ec_app_version: action.data
+        }
+      }
+
+    case CHANGE_STA_TIME:
+      return {
+        ...state,
+        reqData: {
+          ...state.reqData,
+          ec_ranges_start: action.data.sta,
+          tranTime: action.data.day
+        },
+        option: {
+          ...state.option,
+          xAxis: {
+            ...state.option.xAxis,
+            data: action.data.arr
+          }
+        }
+      }
+
+    case CHANGE_END_TIME:
+      return {
+        ...state,
+        reqData: {
+          ...state.reqData,
+          ec_ranges_end: action.data.end,
+          tranTime: action.data.day
+        },
+        option: {
+          ...state.option,
+          xAxis: {
+            ...state.option.xAxis,
+            data: action.data.arr
+          }
+        }
+      }
+
+    default:
+      return state
+  }
+}

@@ -1,0 +1,46 @@
+/**
+ * Created by Alex on 2017/5/9.
+ */
+import NProgress from 'nprogress'
+import { netAndOperatorAction } from './request/netAndOperator'
+
+const GET_STATE_DATA = 'GET_STATE_DATA'
+
+export const netAndOperator = (data, success, fail) => (dispatch, getState) => {
+  const newData = {
+    ec_tab: data.ec_tab,
+    ec_ranges_start: data.ec_ranges_start,
+    ec_ranges_end: data.ec_ranges_end,
+    ec_app_version: data.ec_app_version,
+    ec_appKey: data.ec_appKey,
+    ec_platform: data.ec_platform
+  }
+  dispatch(netAndOperatorAction(newData)).then(action => {
+    NProgress.start()
+    const dataBody = action.data.body
+    dispatch({
+      type: GET_STATE_DATA,
+      data: {
+        netAndCarrier: dataBody.netAndCarrier
+      }
+    })
+    success()
+    NProgress.done()
+  })
+}
+
+const initialState = {
+  netAndCarrier: []
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case GET_STATE_DATA:
+      return {
+        ...state,
+        ...action.data
+      }
+    default:
+      return state
+  }
+}

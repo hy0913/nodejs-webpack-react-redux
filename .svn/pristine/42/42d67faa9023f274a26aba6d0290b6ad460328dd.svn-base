@@ -1,0 +1,15 @@
+import connect from 'STORE/connect'
+import BrandView from './BrandView'
+import { brand } from 'REDUCER/brand'
+
+export default connect(
+	state => ({
+
+	}),
+
+	{
+		brand
+	},
+	
+	BrandView
+)

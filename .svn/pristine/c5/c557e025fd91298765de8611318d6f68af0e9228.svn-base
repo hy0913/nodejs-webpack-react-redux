@@ -1,0 +1,21 @@
+/**
+ * Created by Alex on 2017/5/3.
+ */
+import connect from 'STORE/connect'
+import NetAndOperator from './NetAndOperator'
+import { netAndOperator, selectChange, tabChange, timeChange } from 'REDUCER/netAndOperator'
+
+export default connect(
+  state => ({
+    netAndCarrier: state.netAndOperator.netAndCarrier,
+    netOption: state.netAndOperator.netOption,
+    oprOption: state.netAndOperator.oprOption
+  }),
+  {
+    netAndOperator,
+    selectChange,
+    timeChange,
+    tabChange
+  },
+  NetAndOperator
+)

@@ -1,0 +1,10 @@
+import connect from 'STORE/connect'
+import TimeAnalysisView from './TimeAnalysisView'
+
+export default connect(
+	state => ({
+
+	}),
+	{},
+	TimeAnalysisView
+)

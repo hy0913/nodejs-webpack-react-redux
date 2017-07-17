@@ -1,0 +1,372 @@
+/**
+ * Created by Alex on 2017/4/30.
+ */
+import React, { Component } from 'react'
+import './RealCrash.scss'
+import { Tooltip, Icon, Select, DatePicker, Button, Input } from 'antd'
+import ReactEcharts from 'echarts-for-react'
+
+const Search = Input.Search
+const Option = Select.Option
+
+class RealCrash extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      time: ''
+    }
+  }
+
+  getOption() {
+        const option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'line'
+                }
+            },
+            legend: {
+                bottom: '0',
+                data:[
+                    {
+                        name: '2017-04-26',
+                        icon: 'roundRect'
+                    },
+                    {
+                        name: '2017-04-27',
+                        icon: 'roundRect'
+                    }
+                ]
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLabel: {
+                        interval: 1,
+                        textStyle: {
+                            color: '#000'
+                        }
+                    },
+                    axisLine: {
+                        onZero: false,
+                        lineStyle: {
+                            color: '#000'
+                        }
+                    },
+                    boundaryGap : true,
+                    data : ['22:00', '23:00', '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00']
+                }
+            ],
+            yAxis : {
+                type: 'value',
+                axisTick: {
+                    alignWithLabel: true
+                },
+                axisLabel: {
+                    formatter: '{value}%'
+                },
+                splitLine: {
+                    lineStyle: {
+                        type: 'dotted'
+                    }
+                },
+                axisLine: {
+                    show: false,
+                    onZero: false
+                },
+                axisTick: {
+                    show: false
+                },
+                min: 0,
+                max: 0.25
+            },
+            series: [{
+                name: '2017-04-27',
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                showAllSymbol: true,
+                zlevel: 10,
+                areaStyle: {
+                    normal: {
+                        color: '#e6f5fa'
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0, 153, 204)'
+                    }
+                },
+                data: [0.19, 0.17, 0.10, 0.24, 0.18, 0.16, 0.19, 0.18, 0.17, 0.10, 0.24]
+            },
+                {
+                    name: '2017-04-26',
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 8,
+                    showAllSymbol: true,
+                    areaStyle: {
+                        normal: {
+                            color: '#fafafa'
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'rgb(204, 204, 204)'
+
+                        }
+                    },
+                    data: [0.15, 0.19, 0.15, 0.19, 0.17, 0.10, 0.24, 0.18, 0.16, 0.19, 0.18, 0.15, 0.19, 0.17, 0.10, 0.24, 0.13, 0.18, 0.16 ]
+
+                }
+            ]
+
+        }
+
+        return option
+    }
+
+  tabClick(e) {
+    console.log(e.currentTarget.getAttribute('data-tab'))
+    const tabs = e.currentTarget.parentNode.childNodes
+    for(let i = 0; i < tabs.length; i++){
+      tabs[i].classList.remove('active')
+    }
+    e.currentTarget.classList.add('active')
+  }
+
+  componentWillMount() {
+    this.props.realCrashDynamic()
+    this.props.realCrashChart()
+  }
+
+  componentDidMount() {
+    let now = () => {
+      let date = new Date(),
+        checkTime = (i) => {
+          if (i<10) {
+            i="0" + i
+          }
+          return i
+        },
+        year = checkTime(date.getFullYear()),
+        month = checkTime(date.getMonth() + 1),
+        day = checkTime(date.getDate()),
+        hour = checkTime(date.getHours()),
+        min = checkTime(date.getMinutes()),
+        sec = checkTime(date.getSeconds());
+        // document.getElementsByClassName('time')[0].innerHTML = `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+        this.setState({
+          time: `${year}-${month}-${day} ${hour}:${min}:${sec}`
+        })
+    }
+    t = setInterval(now, 1000);
+  }
+
+  render () {
+    const { tabData } = this.props
+
+    return (
+      <div className="RealCrash">
+        <div className="header">
+          <h3>
+            实时Crash
+            <Tooltip placement="right" title="实时Crash">
+              <Icon type="question-circle" />
+            </Tooltip>
+          </h3>
+          <span>{ this.state.time }</span>
+          <Select defaultValue="全部版本" style={{ width: 120, float: 'right' }}>
+            <Option value="全部版本">全部版本</Option>
+            <Option value="6.8">6.8</Option>
+            <Option value="6.7">6.7</Option>
+          </Select>
+        </div>
+        <div className="RealCrash-img">
+          <div className="img-header">
+            <ul>
+              <li className="active" data-tab="userPercent" onClick={this.tabClick}>
+                <h5>Crash用户占比</h5>
+                <span>{tabData[0].current}</span>
+                <p>比昨日同期：<b>{tabData[0].yestoday}</b></p>
+                <p>比上周同期：<b>{tabData[0].lastweek}</b></p>
+              </li>
+              <li data-tab="clientPercent" onClick={this.tabClick}>
+                <h5>Crash率</h5>
+                <span>{tabData[1].current}</span>
+                <p>比昨日同期：<b>{tabData[1].yestoday}</b></p>
+                <p>比上周同期：<b>{tabData[1].lastweek}</b></p>
+              </li>
+              <li data-tab="crashUser" onClick={this.tabClick}>
+                <h5>Crash次数</h5>
+                <span>{tabData[2].current}</span>
+                <p>比昨日同期：<b>{tabData[2].yestoday}</b></p>
+                <p>比上周同期：<b>{tabData[2].lastweek}</b></p>
+              </li>
+              <li data-tab="crashClient" onClick={this.tabClick}>
+                <h5>Crash用户数</h5>
+                <span>{tabData[3].current}</span>
+                <p>比昨日同期：<b>{tabData[3].yestoday}</b></p>
+                <p>比上周同期：<b>{tabData[3].lastweek}</b></p>
+              </li>
+            </ul>
+          </div>
+          <div className="img-content">
+            <div className="content-header">
+              <h3>区间分布</h3>
+              <Select defaultValue="小时" style={{ width: 80, float: 'right', margin: '6px 15px 0 0'}}>
+                <Option value="小时">小时</Option>
+                <Option value="分钟">分钟</Option>
+              </Select>
+              <h4>时间轴：</h4>
+              <DatePicker style={{ float: 'right', marginRight: 40 }} />
+              <h4>对比：</h4>
+            </div>
+            <ReactEcharts
+              option={this.getOption()}
+              style={{height: '400px'}}
+              onChartReady = {chart => {setTimeout(function(){chart.resize()},0)}}
+            />
+          </div>
+        </div>
+        <div className="content-table">
+          <div className="crash-table-header">
+            <h4>Crash列表</h4>
+            <Button style={{width: 80, float: 'right', margin: '6px 10px 0 0'}}>导出</Button>
+            <Button style={{float: 'right', margin: '6px 10px 0 0'}}>查询</Button>
+            <Search placeholder="输入关键字进行检索..." style={{ width: 200, float: 'right', margin: '6px 10px 0 0' }} />
+          </div>
+          <div id="real-table">
+            <section className="table-header">
+              <div className="long">
+                <p>Crash摘要</p>
+              </div>
+              <div>
+                <p>应用版本</p>
+              </div>
+              <div>
+                <p>Crash次数</p>
+              </div>
+              <div>
+                <p>Crash占比</p>
+              </div>
+              <div>
+                <p>最近出现时间</p>
+              </div>
+              <div>
+                <p>操作</p>
+              </div>
+            </section>
+            <section>
+              <div className="long">
+                <p>StackTrace=====>java.lang.NullPointerException: println needs a message</p>
+              </div>
+              <div>
+                <p>3.7.4.1</p>
+              </div>
+              <div>
+                <p>1</p>
+              </div>
+              <div>
+                <p>50%</p>
+              </div>
+              <div>
+                <p>07:02:50</p>
+              </div>
+              <div>
+                <p>查看详情+</p>
+              </div>
+            </section>
+            <section>
+              <div className="long">
+                <p><nobr>StackTrace=====>java.lang.RuntimeException: Unable to start activity ComponentInfo: java.lang.NullPointerException</nobr></p>
+              </div>
+              <div>
+                <p>3.7.4.1</p>
+              </div>
+              <div>
+                <p>1</p>
+              </div>
+              <div>
+                <p>50%</p>
+              </div>
+              <div>
+                <p>07:02:50</p>
+              </div>
+              <div>
+                <p>查看详情+</p>
+              </div>
+            </section>
+            <section>
+              <div className="long">
+                <p>StackTrace=====>java.lang.NullPointerException: println needs a message</p>
+              </div>
+              <div>
+                <p>3.7.4.1</p>
+              </div>
+              <div>
+                <p>1</p>
+              </div>
+              <div>
+                <p>50%</p>
+              </div>
+              <div>
+                <p>07:02:50</p>
+              </div>
+              <div>
+                <p>查看详情+</p>
+              </div>
+            </section>
+            <section>
+              <div className="long">
+                <p>StackTrace=====>java.lang.NullPointerException: println needs a message</p>
+              </div>
+              <div>
+                <p>3.7.4.1</p>
+              </div>
+              <div>
+                <p>1</p>
+              </div>
+              <div>
+                <p>50%</p>
+              </div>
+              <div>
+                <p>07:02:50</p>
+              </div>
+              <div>
+                <p>查看详情+</p>
+              </div>
+            </section>
+            <section>
+              <div className="long">
+                <p><nobr>StackTrace=====>java.lang.RuntimeException: Unable to start activity ComponentInfo: java.lang.NullPointerException</nobr></p>
+              </div>
+              <div>
+                <p>3.7.4.1</p>
+              </div>
+              <div>
+                <p>1</p>
+              </div>
+              <div>
+                <p>50%</p>
+              </div>
+              <div>
+                <p>07:02:50</p>
+              </div>
+              <div>
+                <p>查看详情+</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default RealCrash

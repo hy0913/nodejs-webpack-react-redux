@@ -1,0 +1,20 @@
+import connect from 'STORE/connect'
+import ApplicationTrendView from './ApplicationTrendView'
+import { applicationTrend , menuTab } from 'REDUCER/applicationTrend'
+
+export default connect(
+	state => ({
+		data2:state.applicationTrend.appTrendTable,
+		arr1:state.applicationTrend.arr1,
+		arr2:state.applicationTrend.arr2,
+		arr3:state.applicationTrend.arr3,
+		arr4:state.applicationTrend.arr4,
+		arr5:state.applicationTrend.arr5,
+		dateArr:state.applicationTrend.dateArr
+	}),
+	{
+		applicationTrend,
+		menuTab
+	},
+	ApplicationTrendView
+)

@@ -1,0 +1,239 @@
+/**
+ * Created by Alex on 2017/4/30.
+ */
+import moment from 'moment'
+import NProgress from 'nprogress'
+import React, { Component } from 'react'
+import ReactEcharts from 'echarts-for-react'
+import { DatePicker, Select, message } from 'antd'
+import ImgTab from '../../components/utils/ImgTab1'
+import TopTitle from '../../components/utils/TopTitle'
+import './NetAndOperator.scss'
+import getTime from 'UTILS/getTime'
+
+const oneDay = 1000 * 60 * 60 * 24
+
+let option2 =  {
+    series: [
+      {
+        name: '访问来源',
+        type: 'pie',
+        hoverAnimation: false,
+        radius: '75%',
+        data: [ {value:10, name:'中国电信'},
+                {value:5, name:'中国联通'},
+                {value:15, name:'其他'},
+                {value:25, name:'中国移动'},
+              ]
+      }
+    ],
+    color: ['#88c3e8', '#aedd8f', '#00ccff', '#ffbb33', '#00cc00', '#ff5c45'],
+    tooltip: {
+      formatter: function (params) {
+        return params.name + '：' + params.value + '(' + params.percent + '%)'
+      }
+    },
+    legend: {
+      data: ['中国电信','中国联通','其他','中国移动'],
+      bottom: '0%'
+    }
+}
+
+let option1 = {
+    series: [
+      {
+        name: '访问来源',
+        type: 'pie',
+        hoverAnimation: false,
+        radius: '75%',
+        data: [
+                {value:10, name:'4G'},
+                {value:5, name:'2G'},
+                {value:15, name:'3G'},
+                {value:25, name:'WIFI'}
+              ]
+      }
+    ],
+    color: ['#88c3e8', '#aedd8f', '#00ccff', '#ffbb33', '#00cc00', '#ff5c45'],
+    tooltip: {
+      formatter: function (params) {
+        return params.name + '：' + params.value + '(' + params.percent + '%)'
+      }
+    },
+    legend: {
+      data: ['4G','2G','3G','WIFI'],
+      bottom: '0%'
+    }
+  }
+class NetAndOperator extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tabs: {
+        tabInfo1: [
+          {text: '当天活跃用户', mark: 'net-day'},
+          {text: '周日活跃用户', mark: 'net-week'},
+          {text: '月日活跃用户', mark: 'net-month'}
+        ],
+        tabInfo2: [
+          {text: '当天活跃用户', mark: 'opr-day'},
+          {text: '周日活跃用户', mark: 'opr-week'},
+          {text: '月日活跃用户', mark: 'opr-month'}
+        ]
+      },
+      isToday: true,
+      date: {},
+      mark: 'net-day'
+    }
+    this.tabClick = this.tabClick.bind(this)
+    this.selectChange = this.selectChange.bind(this)
+  }
+
+  tabClick (mark) {
+    const { netAndOperator, tabChange } = this.props
+    let test = this.state
+    this.setState({
+      mark
+    })
+    let time
+    if (test.isToday) {
+      // console.log(1)
+      switch (mark) {
+        case 'net-day':
+          time = getTime('day', test.isToday)
+          break
+        case 'net-week':
+          time = getTime('week', test.isToday)
+          break
+        case 'net-month':
+          time = getTime('month', test.isToday)
+          break
+      }
+    } else {
+      // console.log(2)
+      switch (mark) {
+        case 'net-day':
+          time = getTime('day', test.isToday, test.date)
+          break
+        case 'net-week':
+          time = getTime('week', test.isToday, test.date)
+          break
+        case 'net-month':
+          time = getTime('month', test.isToday, test.date)
+          break
+      }
+    }
+    tabChange(time)
+    netAndOperator()
+  }
+
+  selectChange (ver) {
+    this.props.selectChange(ver)
+    this.props.netAndOperator()
+  }
+
+  timeChange (funDate) {
+    const { netAndOperator, timeChange } = this.props
+    let chooseTime = new Date(funDate._d).getTime()
+    let current = new Date().getTime()
+    let flag = (current - chooseTime) / oneDay
+    let time
+
+    setTimeout(() => {
+      if (flag > 1) {
+        this.setState({
+          date: funDate._d,
+          isToday: false
+        })
+      } else {
+        this.setState({
+          date: {},
+          isToday: true
+        })
+      }
+      if (this.state.isToday) {
+        switch (this.state.mark) {
+          case 'net-day':
+            time = getTime('day', this.state.isToday)
+            break
+          case 'net-week':
+            time = getTime('week', this.state.isToday)
+            break
+          case 'net-month':
+            time = getTime('month', this.state.isToday)
+            break
+        }
+      } else {
+        switch (this.state.mark) {
+          case 'net-day':
+            time = getTime('day', this.state.isToday, this.state.date)
+            break
+          case 'net-week':
+            time = getTime('week', this.state.isToday, this.state.date)
+            break
+          case 'net-month':
+            time = getTime('month', this.state.isToday, this.state.date)
+            break
+        }
+      }
+      timeChange(time)
+      netAndOperator()
+    }, 0)
+  }
+
+  componentWillMount () {
+    this.props.netAndOperator()
+  }
+
+  render () {
+    const { tabInfo1, tabInfo2 } = this.state.tabs
+    const { netAndOperator, netAndCarrier, netOption, oprOption } = this.props
+    const disabledDate = current => current && current.valueOf() > Date.now()
+    const timer = () => {
+      const current = new Date()
+      current.setHours(0)
+      current.setMinutes(0)
+      current.setSeconds(0)
+      current.setMilliseconds(0)
+      const date = new Date(current.getTime() - oneDay)
+      const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)
+      return `${date.getFullYear()}-${month}-${date.getDate()}`
+    }
+    const initTime = timer()
+
+    return (
+      <div className='net'>
+        <TopTitle value='网络与运营商'>
+          <Select defaultValue='all' style={{ width: 120, float: 'right' }} onChange={(value) => this.selectChange(value)}>
+            <Select.Option value='all'>全部版本</Select.Option>
+            <Select.Option value='6.8'>6.8</Select.Option>
+            <Select.Option value='6.7'>6.7</Select.Option>
+          </Select>
+          <DatePicker style={{ float: 'right', marginRight: 30 }} defaultValue={moment(initTime, 'YYYY-MM-DD')} disabledDate={disabledDate} onChange={(date) => this.timeChange(date)} />
+        </TopTitle>
+        <div className='content'>
+          <ImgTab tabInfo={tabInfo1} click={() => console.log('1')} />
+          <div className='tab-img'>
+            <h4>网络分布</h4>
+            <ReactEcharts
+              option={option1}
+              style={{height: '400px'}}
+            />
+          </div>
+        </div>
+        <div className='content'>
+          <ImgTab tabInfo={tabInfo2} click={() => console.log('2')} />
+          <div className='tab-img'>
+            <h4>运营商分布</h4>
+            <ReactEcharts
+              option={option2}
+              style={{height: '400px'}}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default NetAndOperator

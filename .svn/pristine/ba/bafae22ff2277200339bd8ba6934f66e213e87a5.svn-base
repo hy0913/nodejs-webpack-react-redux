@@ -1,0 +1,151 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { versionAction } from './request/version'
+import { turnHundred } from './region'
+
+
+let dateArr=[],versionArr=[],arr1=[],arr2 =[],stateNow; 
+
+//从小到大排序
+export const sortByKey = (arr, key) => {  
+    for(let i=0;i<arr.length-1;i++){  
+        for(let j=i+1;j<arr.length;j++){  
+            if(arr[i][key]>arr[j][key]){
+                let temp=arr[i];  
+                arr[i]=arr[j];  
+                arr[j]=temp;  
+            }  
+        }  
+    }   
+    return arr;  
+} 
+
+export const version = (data,state,success, fail) => (dispatch, getState) => {
+    dateArr = [],versionArr =[],arr1=[],arr2 =[];
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime.replace(/\-/g, ''),
+      appkey: data.appkey,
+      endTime: data.endTime.replace(/\-/g, '')
+    }
+    console.log(state)       
+    dispatch(versionAction(newData)).then(action => {
+      NProgress.done()    
+      if(action.data.body.errorCode == "0"){
+        let versionAnalysisList = action.data.body.versionAnalysisList
+        
+        let dateArr =[],versionArr = [],seriesData={}, series=[], userArr =[],date = '',arrLength='',appVersion=''
+        versionAnalysisList.map((item,i)=>{
+          let versionAnalysisBack = sortByKey(item.versionAnalysisBack,'date')
+          versionAnalysisBack.map((item,i,arr) => {
+            appVersion = item.appVersion
+            arrLength = arr.length
+            if(userArr.length < arrLength){
+              if(state == 'perUserTime'){
+                userArr.push(item.perUserTime/1000)
+              }else{
+                userArr.push(item[state])
+              }           
+            }
+            if(dateArr.length < arrLength){
+              dateArr.push(item.date)
+            }           
+          })
+          seriesData[i] = userArr
+          userArr = []
+          versionArr.push(appVersion)
+        })
+        let color  = ['rgb(0, 153, 204)','rgb(204, 204, 204)']
+        for(var i=0; i<versionAnalysisList.length;i++){
+          let zlevel = 0
+          i == 0 ? zlevel = 10:zlevel = 0　　
+          series.push({
+                name: versionArr[i],
+                type: 'line',
+                symbol: 'circle',
+                symbolSize: 8,
+                zlevel:zlevel,
+                data: seriesData[i],
+                itemStyle: {
+                      normal: {
+                          color: color[i]
+                      }
+                }
+            })
+        }
+        console.log(dateArr,versionArr,seriesData)  
+        dispatch({
+          type:"VERSION",
+          dateArr,
+          versionArr,
+          series,
+          str:state
+        })
+      }else{
+        fail()
+      }
+            
+    })
+}
+
+export const versionTablelist = (data,suc,fail) => (dispatch,getState)=> {
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime.replace(/\-/g, ''),
+      appkey: data.appkey,
+      endTime: data.endTime.replace(/\-/g, '')
+    }
+    let arrUsers =[],arrAddUsers = []
+    dispatch(versionAction(newData)).then(action => {
+      if(action.data.body.errorCode == '0'){
+        console.log(action)
+        const table = action.data.body.versionAnalysisList,dataTable = []
+        table.forEach((item) =>{
+          dataTable.push(item.versionAnalysisBack[0])     
+        })
+        console.log(dataTable)
+        if(!dataTable[0]){
+          dispatch({
+            type:"VERSION",
+            dataTable:[]
+          })
+        }else{
+          dataTable.forEach((item) => {
+            arrUsers += item.activeUser
+            arrAddUsers += item.addUser
+          })
+          dataTable.forEach((item) => {
+            item.zb1 = turnHundred(item.activeUser,arrUsers)
+            item.zb2 = turnHundred(item.addUser,arrAddUsers)
+          })
+          dispatch({
+            type:"VERSION",
+            dataTable
+          })
+        }
+      }else{
+        fail()
+      }
+    })          
+}
+const initialState = {
+    dateArr:[],
+    versionArr:[],
+    str:'',
+    dataTable:[],
+    series:[]
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'VERSION':
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
+}

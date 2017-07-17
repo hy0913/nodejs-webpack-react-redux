@@ -1,0 +1,13 @@
+import { injectReducer } from 'STORE/reducers'
+
+export default store => ({
+  path : 'userActivity.html',
+  getComponent(nextState, cb) {
+    require.ensure([], (require) => {
+      const userActivity = require('VIEW/userActivity').default
+      // const reducer = require('REDUCER/demo').default
+      // injectReducer(store, { key: 'todayDetails', reducer })
+      cb(null, userActivity)
+    }, 'userActivity')
+  }
+})

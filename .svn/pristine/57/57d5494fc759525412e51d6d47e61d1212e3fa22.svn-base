@@ -1,0 +1,19 @@
+import connect from 'STORE/connect'
+import { selectAppList, createAppList, deleteAppList, updateAppList, chooseAppAction } from 'REDUCER/applist'
+import ApplistView from './ApplistView'
+
+
+export default connect(
+
+  state => ({
+  	state: state.applist
+  }),
+  {
+  	selectAppList,
+  	createAppList,
+  	deleteAppList,
+  	updateAppList,
+  	chooseAppAction
+  },
+  ApplistView
+)

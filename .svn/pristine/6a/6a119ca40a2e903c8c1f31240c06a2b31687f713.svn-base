@@ -1,0 +1,10 @@
+import connect from 'STORE/connect'
+import eventView from './eventView'
+
+export default connect(
+	state => ({
+		// phoneInfoList: state.resolution.phoneInfoList,
+	}),
+	{},
+	eventView
+)

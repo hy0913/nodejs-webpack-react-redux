@@ -1,0 +1,131 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { versionAction } from './request/version'
+import { turnHundred } from './region'
+
+let dateArr=[],versionArr=[],arr1=[],arr2 =[],stateNow; 
+
+export const version = (data,state,success, fail) => (dispatch, getState) => {
+    dateArr = [],versionArr =[],arr1=[],arr2 =[];
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime,
+      appkey: data.appkey,
+      endTime: data.endTime
+    }
+    dispatch(versionAction(newData)).then(action => {
+      NProgress.done()     
+      if(action.data.body.errorCode == "0"){
+        const versionAnalysisList = action.data.body.versionAnalysisList
+        const versionAnalysisBack0 = versionAnalysisList[0].versionAnalysisBack,
+              versionAnalysisBack1 = versionAnalysisList[1].versionAnalysisBack
+        versionAnalysisBack0.forEach((item,i) =>{
+            dateArr.push(item.date)
+            switch(state){
+              case "ACTIVEUSER": 
+                arr1.push(item.activeUser);
+                break
+              case "ADDUSER": 
+                arr1.push(item.addUser);
+                break
+              case "LOGINMEMBER": 
+                arr1.push(item.loginMember);
+                break
+              case "PERSTARTTIMES": 
+                arr1.push(item.perStartTimes);
+                break
+              case "PERUSERTIMES": 
+                arr1.push(item.perUserTime);
+                break
+              default:
+                 arr1.push(0);
+            }        
+        })
+        versionAnalysisBack1.forEach((item,i) =>{
+            switch(state){
+              case "ACTIVEUSER": 
+                arr2.push(item.activeUser);
+                break
+              case "ADDUSER": 
+                arr2.push(item.addUser);
+                break
+              case "LOGINMEMBER": 
+                arr2.push(item.loginMember);
+                break
+              case "PERSTARTTIMES": 
+                arr2.push(item.perStartTimes);
+                break
+              case "PERUSERTIMES": 
+                arr2.push(item.perUserTime);
+                break
+              default:
+                arr2.push(0);
+            }        
+        })
+        versionAnalysisList.forEach((item,i) =>{
+            versionArr.push(item.versionAnalysisBack[i].appVersion)       
+        })
+        dispatch({
+          type:"VERSION",
+          dateArr,
+          versionArr,
+          arr1,
+          arr2,
+          str:state
+        })
+      }else{
+        fail()
+      }
+            
+    })
+}
+
+export const versionTablelist = (data,suc,fail) => (dispatch,getState)=> {
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime,
+      appkey: data.appkey,
+      endTime: data.endTime
+    }
+    let arrUsers =[],arrAddUsers = []
+    dispatch(versionAction(newData)).then(action => {
+      const table = action.data.body.versionAnalysisList,dataTable = []
+      table.forEach((item) =>{
+        dataTable.push(item.versionAnalysisBack[0])
+      })
+      dataTable.forEach((item) => {
+        arrUsers += item.activeUser
+        arrAddUsers += item.addUser
+      })
+      dataTable.forEach((item) => {
+        item.zb1 = turnHundred(item.activeUser,arrUsers)
+        item.zb2 = turnHundred(item.addUser,arrAddUsers)
+      })
+      dispatch({
+        type:"VERSION",
+        dataTable
+      })
+    })
+}
+const initialState = {
+    dateArr:[],
+    versionArr:[],
+    arr1:[],
+    arr2:[],
+    str:'',
+    dataTable:[]
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'VERSION':
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
+}

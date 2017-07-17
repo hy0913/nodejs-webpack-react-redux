@@ -1,0 +1,128 @@
+import React, { Component, PropTypes } from 'react'
+import { Table, Row, Col, Button, Modal, DatePicker, Menu, Dropdown, Icon, message, Select } from 'antd'
+import { Link } from 'react-router'
+import 'STYLE/pages/resolution.scss'
+
+export default class Resoution extends Component {
+	constructor(props) {
+		super(props)
+	}
+	onChange(date, dateString) {
+  		console.log(date, dateString);
+	}
+	handleClick(e){
+		const childs = e.currentTarget.parentNode.childNodes;
+		for(let i=0; i < childs.length; i++){
+			childs[i].classList.remove('active');
+		}
+		e.currentTarget.classList.add('active');
+	}
+	outputClick(){
+		console.log("正在导出文件...")
+	}
+	onSearch(roleName) {
+	    // const { getInfoByRoleName } = this.props
+	    // getInfoByRoleName(roleName)
+  	}
+	render() {
+		const columns = [{
+	      title: '分辨率',
+	      dataIndex: 'hisId',
+	      key: 'hisId'
+	    }, {
+	      title: '次均使用时长占比',
+	      dataIndex: 'flowId',
+	      key: 'flowId'
+	    }, {
+	      title: '次均使用时长',
+	      dataIndex: 'bsnCode',
+	      key: 'bsnCode'
+	    }]
+
+	    const formatStr = str => {
+	      let paramsArr = str.split(',')
+	      let jsonArr = []
+	      paramsArr.map(item => {
+	        let tmp = {}
+	        let li = item.split('=')
+	        let key = li[0]
+	        let val = li[1]
+	        key ? null : key = '未知'
+	        if (val) {
+	          tmp.key = key
+	          val.indexOf(':') > 0 ? val = val.replace(/:/g, '， ') : null
+	          tmp.value = val
+	          jsonArr.push(tmp)
+	        } else {
+	          jsonArr.push({
+	            key: key,
+	            value: '暂无'
+	          })
+	        }
+	      })
+	      return jsonArr
+    	}  
+
+	    const formatForm = str => formatStr(str).map((item, i) => {
+	      return (
+	        <tr key={i}>
+	          <td style={{ padding: '5px 0', textAlign: 'right', fontWeight: 'bold' }}>{item.key}：</td>
+	          <td style={{ padding: '5px 0' }}>{item.value}</td>
+	        </tr>
+	      )
+    	})
+
+		const { phoneInfoList } = this.props
+		return (
+			<div className='layout-container'>
+				<Row className='header-container'>
+      				<Col span={6} className='fix-left'><h5>分辨率</h5><Icon type="question-circle" /></Col>
+			      	<Col span={6}></Col>
+			      	<Col span={8}><DatePicker onChange={this.onChange} /></Col>
+			      	<Col span={4}>
+			      		<Select
+    						showSearch
+    						style={{ width: 150, float: 'right' }}
+    						defaultValue="all"
+  						>
+    						<Option value="all">全部版本</Option>
+    						<Option value="6.8">6.8</Option>
+    						<Option value="6.7">6.7</Option>
+  						</Select>
+			    	</Col>
+    			</Row>	
+    			<ul className='nav-bar'>
+    				<li onClick={e => this.handleClick(e)} className='active'><a>活跃用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新增用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>升级用户</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>登录会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新登录会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>新注册会员</a></li>
+    				<li onClick={e => this.handleClick(e)} className=''><a>人均启动次数</a></li>
+    				<li onClick={e => this.handleClick(e)} className='last-li'><a>次均使用时长(秒)</a></li>
+    			</ul>
+    			<div className='table-title-bar'>
+    			<div className='table-title-text'>分辨率</div>
+    				<div className='outputBtn'><Button onClick={this.outputClick}>导出</Button></div>
+    			</div>
+				<div className='app-narrow-table'>
+          			<Table
+			            rowKey='hisId'
+			            bordered
+			            columns={columns}
+			            dataSource={ phoneInfoList }
+          			/>
+        		</div>
+        		<Modal>
+	        		<div style={{ padding: '0 20px' }}> 
+			            <table>
+			              <tbody>
+			                {/*formatForm(this.state.detailparams)*/}
+			              </tbody>
+			            </table>
+			         </div>
+        		</Modal>
+			</div>
+		)
+	}
+}

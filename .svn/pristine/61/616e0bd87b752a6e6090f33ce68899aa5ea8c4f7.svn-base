@@ -1,0 +1,145 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { Modal, Button, Input, Select, Checkbox, Tooltip } from 'antd'
+import './ApplistView.scss'
+const { Option, OptGroup } = Select
+
+
+export default class ApplistView extends Component {
+	constructor(props){
+		super(props)
+		this.state = {
+			createAppVisible: false
+		}
+	}
+	componentWillMount() {
+	}
+	resetStateList() {
+    	
+	}
+	handleClick(){
+		console.log(123)
+	}
+	createApp(e) {
+		this.setState({
+			createAppVisible: true
+		})
+	}
+	handleOk(e) {
+    	console.log(e);
+    	this.setState({
+      		createAppVisible: false,
+    	});
+  	}
+  	handleCancel(e) {
+    	console.log(e);
+    	this.setState({
+      		createAppVisible: false,
+    	});
+  	}
+	render () {
+		const slelectList = ['社交', '摄影与摄像', '效率', '生活', '美食佳饮', 
+							 '工具', '娱乐', '游戏', '儿童', '教育', 
+							 '报刊杂志', '健康健美', '旅游', '音乐', '体育', 
+							 '商务', '新闻', '财务', '参考', '导航', '医疗', 
+							 '图书', '天气','智能物联网', '其他']
+		return (
+				<div className="applist">
+					<div className="top">
+						<div className="list">APP列表</div>
+						<div className="btn1">我创建的APP</div>
+						<div className="btn2">被授权的APP</div>
+						<div className="btn3" onClick={(e) => this.createApp(e)}>创建APP</div>
+						<Modal 
+							title="创建APP"
+							visible={this.state.createAppVisible}
+          					onOk={(e) => this.handleOk(e)} 
+          					onCancel={(e) => this.handleCancel(e)}
+          					okText="创建" cancelText="取消"
+        				>
+          					<p>
+          						<span className='title'><b style={{color: '#F00'}}>*</b> APP名称：</span>
+          						<Tooltip placement="top" title='APP名称支持中文、英文字母、数字和下划线，长度限制4~30，其中中文算2位'>
+        							<Input placeholder="请输入APP名称"/>
+      							</Tooltip>
+          					</p>
+          					<p>
+          						<span className='title'>分类：</span>
+          						<Select
+    								showSearch
+    								style={{ width: '60%' }}
+    								defaultValue="社交"
+  								>
+    								{
+    									slelectList.map((item) => {
+											return <Option value={item}>{item}</Option>
+    									})
+    								}
+  								</Select>
+  							</p>
+          					<p>
+          						<span style={{ height: '82px', lineHeight: '82px' }} className='title'>描述：</span>
+          						<Input type="textarea" rows={4} />
+          					</p>
+          					<p style={{textAlign: 'center'}}>
+          						<Checkbox>我已阅读并同意 <b style={{color: '#06C', fontWeight: 'normal'}}>《移动服务用户服务条款》</b></Checkbox>
+          					</p>
+        				</Modal>
+					</div>
+					<div className="tb">
+						<table border="0">
+							<tbody align="center">
+								<tr style={{'background':'#F5F6FA','color':'#666'}}>
+									<td style={{'width':'30%'}}>APP名称</td>
+									<td style={{'width':'10%'}}>分类</td>
+									<td style={{'width':'20%'}}>状态</td>
+									<td style={{'width':'40%','text-align':'right','padding-right':'18px'}}>操作</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>我的金融生活</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>金融生活平台</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>Flame</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+								<tr>
+									<td style={{'width':'30%'}}>Flame123</td>
+									<td style={{'width':'10%'}}></td>
+									<td style={{'width':'20%'}}>正常</td>
+									<td style={{'width':'40%','text-align':'right'}}>
+										<span><Link to="home/todayDetails.html">查看数据</Link></span>
+										<span>下载SDK</span>
+										<span>应用证书</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>			
+			)
+	
+	}
+}

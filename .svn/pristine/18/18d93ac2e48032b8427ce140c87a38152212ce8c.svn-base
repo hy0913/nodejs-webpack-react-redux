@@ -1,0 +1,74 @@
+import NProgress from 'nprogress'
+import { message } from 'antd'
+import md5 from 'md5'
+import API from 'CONSTANT/api'
+import { versionAction } from './request/version'
+
+let dateArr=[],versionArr=[],arr1=[],arr2 =[],stateNow; 
+
+export const version = (data,state,success, fail) => (dispatch, getState) => {
+    dateArr = [],versionArr =[],arr1=[],arr2 =[];
+    const newData = {
+      platform: data.platform,
+      beginTime: data.beginTime,
+      appkey: data.appkey,
+      endTime: data.endTime
+    }
+    
+    console.log("stateNow===="+stateNow)
+    dispatch(versionAction(newData)).then(action => {
+      NProgress.done()     
+      console.log(action.data.body)
+      if(action.data.body.errorCode == "0"){
+        success()
+        const versionAnalysisList = action.data.body.versionAnalysisList
+        const versionAnalysisBack0 = versionAnalysisList[0].versionAnalysisBack,
+              versionAnalysisBack1 = versionAnalysisList[1].versionAnalysisBack
+        versionAnalysisBack0.forEach((item,i) =>{
+            dateArr.push(item.date)
+            switch(state){
+              case "ACTIVEUSER": 
+                arr1.push(item.activeUser);
+                break
+            }        
+        })
+        versionAnalysisBack1.forEach((item,i) =>{
+            switch(state){
+              case "ACTIVEUSER": 
+                arr2.push(item.activeUser);
+                break
+            }        
+        })
+        versionAnalysisList.forEach((item,i) =>{
+            versionArr.push(item.versionAnalysisBack[i].appVersion)       
+        })
+        console.log(versionArr,state,arr1,arr2)
+        dispatch({
+          type:"VERSION",
+          dateArr,
+          versionArr,
+          arr1,
+          arr2
+        })
+      }else{
+        fail()
+      }
+            
+    })
+}
+
+const initialState = {
+  
+}
+
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case 'VERSION':
+      return {
+        ...state,
+        ...action
+      }
+    default:
+      return state
+  }
+}

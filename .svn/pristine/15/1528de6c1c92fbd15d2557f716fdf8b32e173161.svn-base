@@ -1,0 +1,206 @@
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import NProgress from 'nprogress'
+import { Modal, Button, Input, Select, Checkbox, Tooltip, Icon, message, Table } from 'antd'
+import './OnlineParam.scss'
+const { Option, OptGroup } = Select
+
+export default class OnlineParamView extends Component {
+	constructor(props) {
+    	super(props)
+    	this.state = {
+        manageVisible: false,
+        confirmLoading: false
+      }
+  }
+
+  manage() {
+    this.setState({
+        manageVisible: true
+    })
+  }
+
+  handleOk() {
+
+  }
+
+  handleCancel() {
+    this.setState({
+      manageVisible: false
+    })
+  }
+
+  componentWillMount() {
+    
+  }
+  componentDidMount() {
+
+  }
+  render() {
+    const selectList = ['YES', 'NO']
+  	return (
+			<div className="onlineParam">
+				<div className="row1">
+            		<div>
+              			<h5 className="title">
+                			在线参数
+                			<Tooltip placement="right" title="在线参数">
+                  				<Icon type="question-circle" />
+                			</Tooltip>
+              			</h5>
+              		</div>
+            		<div className="tb">
+              			<table>
+                			<tbody>
+                  				<tr style={{'background':'#F5F6FA','color':'#666'}}>
+                  				  <td style={{'width':'13%'}}>上送事件间隔(毫秒)</td>
+                  				  <td style={{'width':'13%'}}>上送日志条数(条)</td>
+                  				  <td style={{'width':'13%'}}>日志最大缓存(M)</td>
+                  				  <td style={{'width':'13%'}}>仅wifi上送</td>
+                  				  <td style={{'width':'13%'}}>仅wifi更新配置</td>
+                  				  <td style={{'width':'13%'}}>支持无码埋点</td>
+                  				  <td style={{'width':'13%'}}>无码埋点配置接口</td>
+                  				  <td style={{'width':'9%','textAlign':'right','paddingRight':'18px'}}>操作</td>
+                  				</tr>
+                       			<tr>
+                       			  <td style={{'width':'13%'}}>15000</td>
+                       			  <td style={{'width':'13%'}}>30</td>
+                       			  <td style={{'width':'13%'}}>2</td>
+                       			  <td style={{'width':'13%'}}>NO</td>
+                       			  <td style={{'width':'13%'}}>NO</td>
+                       			  <td style={{'width':'13%'}}>NO</td>
+                       			  <td style={{'width':'13%'}}>暂无</td>
+                       			  <td style={{'width':'9%','textAlign':'right'}}>
+                       			    <span onClick={(e) => this.manage(e)}>修改</span>
+                       			  </td>
+                       			</tr>
+              				</tbody>
+              			</table>
+            		</div>
+                <div style={{marginTop:20}}>
+                    <h5 className="title">
+                      无码埋点
+                      <Tooltip placement="right" title="无码埋点">
+                          <Icon type="question-circle" />
+                      </Tooltip>
+                    </h5>
+                    <Button type="primary" onClick={(e) => {this.setState({createChannel: true})}}>新建无码埋点</Button>
+                </div>
+                <div className="tb">
+                    <table>
+                      <tbody>
+                          <tr style={{'background':'#F5F6FA','color':'#666'}}>
+                            <td style={{'width':'17%'}}>事件名称</td>
+                            <td style={{'width':'17%'}}>事件类型</td>
+                            <td style={{'width':'17%'}}>代理</td>
+                            <td style={{'width':'17%'}}>路径</td>
+                            <td style={{'width':'17%'}}>触发行为</td>
+                            <td style={{'width':'15%','textAlign':'right','paddingRight':'18px'}}>操作</td>
+                          </tr>
+                            <tr>
+                              <td style={{'width':'17%'}}>15000</td>
+                              <td style={{'width':'17%'}}>30</td>
+                              <td style={{'width':'17%'}}>2</td>
+                              <td style={{'width':'17%'}}>NO</td>
+                              <td style={{'width':'17%'}}>NO</td>
+                              <td style={{'width':'15%','textAlign':'right'}}>
+                                <span onClick={(e) => this.manage(e)}>修改</span>
+                                <span onClick={(e) => this.manage(e)}>删除</span>
+                              </td>
+                            </tr>
+                      </tbody>
+                    </table>
+                </div>
+				</div>
+
+        <Modal 
+          title="修改在线参数"
+          visible={this.state.manageVisible}
+          onOk={(e) => this.handleOk(e)} 
+          onCancel={(e) => this.handleCancel(e)}
+          confirmLoading={this.state.confirmLoading}
+          okText="修改" cancelText="取消"
+        >
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 上送事件间隔(毫秒)：</span>
+            <Input 
+              placeholder="请输入上送事件间隔" 
+              onChange={(e) => {console.log(e.target.value)}}
+              value='15000'
+            />
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 上送日志条数(条)：</span>
+            <Input 
+              placeholder="请输入上送日志条数" 
+              onChange={(e) => {console.log(e.target.value)}}
+              value='30'
+            />
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 日志最大缓存(M)：</span>
+            <Input 
+              placeholder="请输入日志最大缓存" 
+              onChange={(e) => {console.log(e.target.value)}}
+              value='2'
+            />
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 仅wifi上送：</span>
+            <Select
+              showSearch
+              style={{ width: '60%' }}
+              value='NO'
+              onChange={ (e, value) => this.handleChange(e, value) }
+            >
+              {
+                selectList.map((item, index) => {
+                  return <Option value={item} key={index}>{item}</Option>
+                })
+              }
+            </Select>
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 仅wifi更新配置：</span>
+            <Select
+              showSearch
+              style={{ width: '60%' }}
+              value='NO'
+              onChange={ (e, value) => this.handleChange(e, value) }
+            >
+              {
+                selectList.map((item, index) => {
+                  return <Option value={item} key={index}>{item}</Option>
+                })
+              }
+            </Select>
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 支持无码埋点：</span>
+            <Select
+              showSearch
+              style={{ width: '60%' }}
+              value='NO'
+              onChange={ (e, value) => this.handleChange(e, value) }
+            >
+              {
+                selectList.map((item, index) => {
+                  return <Option value={item} key={index}>{item}</Option>
+                })
+              }
+            </Select>
+          </div>
+          <div className='list'>
+            <span className='title'><b style={{color: '#F00'}}>*</b> 无码埋点配置接口：</span>
+            <Input 
+              placeholder="请输入无码埋点配置接口" 
+              onChange={(e) => {console.log(e.target.value)}}
+              value='暂无'
+            />
+          </div>
+        </Modal>
+
+			</div>
+  		)
+  	}
+}

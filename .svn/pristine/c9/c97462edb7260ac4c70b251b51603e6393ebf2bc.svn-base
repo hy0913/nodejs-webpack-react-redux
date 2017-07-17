@@ -1,0 +1,14 @@
+export const ROOT_PATH = 'dataAnalyseIM'
+export const HOME_PATH = 'home'
+export const HOME_MENU = ''
+export const HOME_ITEM = ''
+
+/*时间*/
+const date = new Date(),
+	  year = date.getFullYear(),
+	  month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+	  preday = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+	  day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+	  today = `${year}-${month}-${day}`,
+	  yesterday = `${year}-${month}-${preday}`;
+export { today, yesterday }

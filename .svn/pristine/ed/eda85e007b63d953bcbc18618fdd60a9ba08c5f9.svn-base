@@ -1,0 +1,279 @@
+import React, { Component } from 'react'
+import './applicationTrend.scss'
+import NProgress from 'nprogress'
+import { Button, Icon, Select, Tooltip, DatePicker, Table , message } from 'antd'
+import moment from 'moment';
+import ReactEcharts from 'echarts-for-react'
+import { getOption3 } from '../../option/todayDetails'
+const { Option, OptGroup } = Select;
+const columns1 = [{
+		  title: '对比时间',
+		  dataIndex: 'time'
+		}, {
+		  title: '活跃用户',
+		  dataIndex: 'activeUser',
+		}, {
+		  title: '新增用户',
+		  dataIndex: 'addUser',
+		},{
+		  title: '登录会员',
+		  dataIndex: 'loginVip',
+		},{
+		  title: '新登录会员',
+		  dataIndex: 'new_login_member',
+		},{
+		  title: '新注册会员',
+		  dataIndex: 'newRegVip',
+		},{
+		  title: '人均启动次数',
+		  dataIndex: 'startUpAccount',
+		},{
+		  title: '活跃度',
+		  dataIndex: 'activeDegree',
+		}];
+		const data1 = [{
+		  key: '1',
+		  time: '昨天',
+		  activeUser: '43',
+		  addUser: '-',
+		  loginVip: '-',
+		  newLoginVip: '-',
+		  newRegVip: '-',
+		  startUpAccount: '1.74',
+		  activeDegree: '0.00%'
+		}, {
+		  key: '2',
+		  time: '近7天',
+		  activeUser: '70',
+		  addUser: '9',
+		  loginVip: '-',
+		  newLoginVip: '-',
+		  newRegVip: '-',
+		  startUpAccount: '1.78',
+		  activeDegree: '0.01%'
+		}, {
+		  key: '3',
+		  time: '近30天',
+		  activeUser: '139',
+		  addUser: '52',
+		  loginVip: '-',
+		  newLoginVip: '-',
+		  newRegVip: '-',
+		  startUpAccount: '2',
+		  activeDegree: '0.01%'
+		}, {
+		  key: '4',
+		  time: '历史累计',
+		  activeUser: '1,358,270',
+		  addUser: '-',
+		  loginVip: '1,211,239',
+		  newLoginVip: '-',
+		  newRegVip: '14,794',
+		  startUpAccount: '-',
+		  activeDegree: '-'
+		}];
+		
+
+export default class ApplicationTrend extends Component {
+	constructor(props){
+		super(props)
+		this.state = {
+			"req":{
+				"platform":"1",
+	         	"beginTime":"20170501",
+	          	"appVersion":"all",
+				"appkey":"sads213",
+	            "endTime":"20170507",
+	            "currentPage":"2",
+	          	"turnPageShowNum":"4"
+	        }
+		}
+	}
+	componentWillMount(){
+		const { applicationTrend } = this.props
+        NProgress.start()
+        applicationTrend(this.state.req, () => {
+            NProgress.done()
+            message.info('请求发送成功')
+        }, () => {
+            NProgress.done()
+            message.info('请求发送失败')
+        })
+	}
+	handleClick(e) {		
+		let str = e.currentTarget.innerHTML
+		if(str == '升级用户' || str == '新登录会员' || str == '新注册会员'){
+			message.info('功能暂未开放')
+			return
+		}
+		const childs = e.currentTarget.parentNode.parentNode.childNodes
+		for(let i = 0; i < childs.length; i++){
+			childs[i].classList.remove('active')
+		}
+		e.currentTarget.parentNode.classList.add('active')
+		const { menuTab } = this.props
+		let state1 = e.currentTarget.getAttribute('data-value')
+		menuTab(state1)
+
+	}
+	handleChange(pagination, filters, sorter) {
+  	  console.log('Various parameters', pagination, sorter);
+  	}
+	render() {
+		const { data2, arr1, dateArr} = this.props
+		let arrNow = arr1
+		const date = new Date(),
+			  year = date.getFullYear(),
+			  month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1),
+			  lastMonth = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth(),
+			  day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+			  preday = (date.getDate() - 1) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() - 1),
+			  lMonth = `${year}-${lastMonth}-${day}`,
+			  yesterday = `${year}-${month}-${preday}`;
+    	const columns2 = [{
+    	  title: '日期',
+    	  dataIndex: 'date',
+    	  sorter: (a, b) => a.date - b.date
+    	}, {
+    	  title: '活跃用户',
+    	  dataIndex: 'activeUser',
+    	  sorter: (a, b) => a.active_user - b.active_user
+    	}, {
+    	  title: '新增用户',
+    	  dataIndex: 'addUser',
+    	  sorter: (a, b) => a.add_user - b.add_user
+    	},{
+    	  title: '升级用户',
+    	  dataIndex: 'upgradeUser',
+    	  sorter: (a, b) => a.upgrade_user - b.upgrade_user
+    	},{
+    	  title: '登录会员',
+    	  dataIndex: 'loginMember',
+    	  sorter: (a, b) => a.login_member - b.login_member
+    	},{
+    	  title: '新登录会员',
+    	  dataIndex: 'newLoginMember',
+    	  sorter: (a, b) => a.new_login_member - b.new_login_member
+    	},{
+    	  title: '新注册会员',
+    	  dataIndex: 'newRegisterMember',
+    	  sorter: (a, b) => a.new_register_member - b.new_register_member
+    	},{
+    	  title: '人均启动次数',
+    	  dataIndex: 'perStartTimes',
+    	  sorter: (a, b) => a.per_start_times - b.per_start_times
+    	},{
+    	  title: '次均使用时长(秒)',
+    	  dataIndex: 'perUserTime',
+    	  sorter: (a, b) => a.per_user_time - b.per_user_time
+    	}];
+		return (
+			<div className="applicationTrend">
+				<div className="row1">
+					<div>
+						<h5 className="title">
+							应用趋势
+							<Tooltip placement="right" title="应用趋势">
+        						<Icon type="question-circle" />
+      						</Tooltip>
+						</h5>
+						<div>
+							<Select
+    						showSearch
+    						style={{ width: 150, float: 'right' }}
+    						defaultValue="all"
+  							>
+    							<Option value="all">全部版本</Option>
+    							<Option value="6.8">6.8</Option>
+    							<Option value="6.7">6.7</Option>
+  							</Select>
+						</div>
+  						<div>
+  							<DatePicker size="default" defaultValue={moment(lMonth, 'YYYY-MM-DD')} />
+  							{`  至  `}
+  							<DatePicker size="default" defaultValue={moment(yesterday, 'YYYY-MM-DD')} />
+  						</div>
+					</div>
+				</div>
+				<div className="row2">
+					<div className="tableTitle">
+						<div className="tableTitleText">整体数据</div>
+						<div className="rightBtn">
+							<Button>导出</Button>
+						</div>
+					</div>
+					<Table
+    					columns={columns1}
+    					dataSource={data1}
+    					pagination={false}
+    					size='middle'
+    					className="tableContent"
+ 					/>
+ 					<div className="tableFooter"></div>
+				</div>
+				<div className="row3">
+					<ul className="nav">
+						<li className="active">
+							<a className="fz12" onClick={e => this.handleClick(e)} data-value="ACTIVEUSER">活跃用户</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)} data-value="ADDUSER">新增用户</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)}>升级用户</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)} data-value="LOGINMEMBER">登录会员</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)}>新登录会员</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)}>新注册会员</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)} data-value="PERSTARTTIMES">人均启动次数</a>
+						</li>
+						<li>
+							<a className="fz12" onClick={e => this.handleClick(e)} data-value="PERUSERTIMES">次均使用时长(秒)</a>
+						</li>
+					</ul>
+				</div>
+				<div className="row4">
+					<div>
+						<h6 className="fz14">趋势图</h6>
+						<div>
+							<h6 className="fz14">对比：</h6>
+							<Select
+    							showSearch
+    							defaultValue="week"
+  							>
+    							<Option value="week">近7天均值</Option>
+    							<Option value="month">近30天均值</Option>
+  							</Select>
+						</div>
+						<ReactEcharts
+                        	option={getOption3(arrNow,dateArr)} 
+                        	style={{height: '450px', width: '100%'}} 
+                        	className='react_for_echarts' 
+                        />
+					</div>
+				</div>
+				<div className="row5">
+					<div className="tableTitle">
+						<div className="tableTitleText">数据表</div>
+						<div className="rightBtn">
+							<Button>导出</Button>
+						</div>
+					</div>
+					<Table
+    					columns={columns2}
+    					dataSource={data2}
+    					className="tableContent"
+    					onChange={this.handleChange}
+ 					/>
+				</div>
+			</div>
+		)
+	}
+}

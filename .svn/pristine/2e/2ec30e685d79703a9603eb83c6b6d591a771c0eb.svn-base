@@ -1,0 +1,30 @@
+import React, { Component } from 'react'
+import Sidebar from '../Sidebar'
+import './header.scss'
+import { Button } from 'antd'
+import logo from 'IMAGE/logo.png'
+
+export default class HeaderView extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return (
+      <div className="app-header">
+        <header>
+            <div className="logo"><span></span>移动数据分析平台</div>
+            <nav className="device-type clearfix">
+                <h3>设备类型</h3>
+                <ul className="clearfix">
+                    <li className="active"><a href="#">Android</a></li>
+                    <li><a href="#">Iphone</a></li>
+                    <li><a href="#">Ipad</a></li>
+                </ul>
+            </nav>
+        </header>
+        <Sidebar/>
+      </div>
+    )
+  }
+}

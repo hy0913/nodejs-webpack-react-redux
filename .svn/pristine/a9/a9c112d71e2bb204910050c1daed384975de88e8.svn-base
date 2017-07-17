@@ -1,0 +1,16 @@
+/**
+ * Created by Alex on 2017/5/3.
+ */
+import connect from 'STORE/connect'
+import NetAndOperator from './NetAndOperator'
+import { netAndOperator } from 'REDUCER/netAndOperator'
+
+export default connect(
+  state => ({
+    netAndCarrier: state.netAndOperator.netAndCarrier
+  }),
+  {
+    netAndOperator
+  },
+  NetAndOperator
+)

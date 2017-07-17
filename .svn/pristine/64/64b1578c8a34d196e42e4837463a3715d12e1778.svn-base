@@ -1,0 +1,191 @@
+/**
+ * Created by Alex on 2017/4/30.
+ */
+import React, { Component } from 'react'
+import { Tooltip, Icon, Select, DatePicker, Button } from 'antd'
+import './CrashTrend.scss'
+import ReactEcharts from 'echarts-for-react'
+import ImgTab from '../../components/utils/ImgTab'
+
+const { RangePicker } = DatePicker
+
+class CrashTrend extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tabInfo1: [
+        {text: 'Crash用户占比'},
+        {text: 'Crash率'},
+        {text: 'Crash次数'},
+        {text: 'Crash用户数'}
+      ]
+    }
+  }
+
+  getOption () {
+    const option = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        bottom: '20',
+        data: '活跃用户'
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        containLabel: true
+      },
+      xAxis: [{
+          type: 'category',
+          axisTick: {
+              // 刻度与标签对齐
+              alignWithLabel: 3
+              // 隔1个显示1个标签
+          },
+          splitLine: {
+              show: true,
+              lineStyle: {
+                  type: 'solid'
+              }
+          },
+          boundaryGap: false,
+          data: ['2017-03-27','2017-03-28','2017-03-29','2017-03-30','2017-03-31',
+              '2017-04-01','2017-04-02','2017-04-03','2017-04-04','2017-04-05',
+              '2017-04-06','2017-04-07','2017-04-08','2017-04-09','2017-04-10',
+              '2017-04-11','2017-04-12','2017-04-13','2017-04-14','2017-04-15',
+              '2017-04-16','2017-04-17','2017-04-18','2017-04-19','2017-04-20',
+              '2017-04-21','2017-04-22','2017-04-23','2017-04-24','2017-04-25','2017-04-26'
+          ]
+      }],
+      yAxis: {
+          type: 'value',
+          axisTick: {
+              // 刻度与标签对齐
+              alignWithLabel: true
+          },
+          splitLine: {
+              lineStyle: {
+                  type: 'solid'
+              }
+          },
+          axisTick: {
+              show: false
+          }
+      },
+      series: [{
+          name: '活跃用户',
+          type: 'line',
+          zlevel: 10,
+          symbol: 'circle',
+          symbolSize: 8,
+          itemStyle: {
+              normal: {
+                  color: 'rgb(0, 153, 204)'
+              }
+          },
+          data: [
+              38, 45, 44, 45, 42,
+              42, 41, 44, 40, 40,
+              42, 46, 38, 42, 42,
+              44, 45, 42, 38, 49,
+              45, 41, 40, 44, 44,
+              44, 46, 39, 44, 39, 43
+          ]
+      } ]
+    }
+    return option
+  }
+
+  tabClick () {
+    console.log(1)
+  }
+  render () {
+    const { tabInfo1 } = this.state
+    return (
+      <div className='crashTrend'>
+        <div className='header'>
+          <h3>
+            Crash趋势
+            <Tooltip placement='right' title='只能选择最近60天的趋势'>
+              <Icon type='question-circle' />
+            </Tooltip>
+          </h3>
+          <Select defaultValue='全部版本' style={{ width: 120, float: 'right' }}>
+            <Option value='全部版本'>全部版本</Option>
+            <Option value='6.8'>6.8</Option>
+            <Option value='6.7'>6.7</Option>
+          </Select>
+          <RangePicker style={{ float: 'right', marginRight: 50 }} />
+        </div>
+        <div className='crashTrend-img'>
+          <ImgTab tabInfo={tabInfo1} click={this.tabClick} />
+          <div className='img-content'>
+            <h4>网络分布</h4>
+            <ReactEcharts
+              option={this.getOption()}
+              style={{height: '400px'}}
+            />
+            <div className='crashTrend-table-header'>
+              <h5>Crash列表</h5>
+              <Button style={{float: 'right', margin: '6px 10px 0 0'}}>详情</Button>
+              <Button style={{float: 'right', margin: '6px 10px 0 0'}}>导出</Button>
+            </div>
+          </div>
+        </div>
+        <div className='crashTrend-table'>
+          <div className='crashTrend-table-header' >
+            <h5>Crash列表</h5>
+            <Button style={{float: 'right', margin: '6px 10px 0 0'}}>导出</Button>
+            <Select defaultValue='应用版本' style={{ width: 150, float: 'right', margin: '6px 10px 0 0' }}>
+              <Option value='应用版本'>应用版本</Option>
+              <Option value='发生页面'>发生页面</Option>
+              <Option value='操作系统版本'>操作系统版本</Option>
+              <Option value='品牌'>品牌</Option>
+              <Option value='机型'>机型</Option>
+            </Select>
+            <h6>选择分布维度：</h6>
+          </div>
+          <div id='crashTrend-table'>
+            <section className='table-header'>
+              <div>
+                <p>名称</p>
+              </div>
+              <div>
+                <p>Crash次数</p>
+              </div>
+              <div>
+                <p>Crash率</p>
+              </div>
+            </section>
+            <section>
+              <div>
+                <p>6.8</p>
+              </div>
+              <div>
+                <p>17</p>
+              </div>
+              <div>
+                <p>2.57%</p>
+              </div>
+            </section>
+            <section>
+              <div>
+                <p>6.8</p>
+              </div>
+              <div>
+                <p>17</p>
+              </div>
+              <div>
+                <p>2.57%</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  }
+
+export default CrashTrend
